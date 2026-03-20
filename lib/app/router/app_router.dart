@@ -25,6 +25,7 @@ import '../../screen/homeScreen/ui/industry/industryDetailSCreen.dart';
 import '../../screen/homeScreen/ui/industry/industryListScreen.dart';
 import '../../screen/homeScreen/ui/latestNews/latestNoticeDetailScreen.dart';
 import '../../screen/homeScreen/ui/latestNews/latestNoticeListScreen.dart';
+import '../../screen/leadership/ui/postLeaderShipScreen.dart';
 import '../../screen/myMembership/ui/myMemberShipScreen.dart';
 import '../../screen/notification/ui/notificationScreen.dart';
 import '../../screen/post/ui/membershipAssignmentScreen.dart';
@@ -199,6 +200,9 @@ class AppRouter {
       GoRoute(
         path: Routes.profileAssociation,
         builder: (_, __) => ProfileAssociationScreen(),
+      ),GoRoute(
+        path: Routes.postLeaderShip,
+        builder: (_, __) => PostLeaderShipScreen(),
       ),
       GoRoute(
         path: Routes.profileMember,

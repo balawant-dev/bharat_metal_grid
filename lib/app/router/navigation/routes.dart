@@ -6,6 +6,7 @@ class Routes {
   static const home = '/home';
   static const success = '/success';
   static const profileAssociation = '/profileAssociation';
+  static const postLeaderShip = '/postLeaderShip';
   static const profileMember = '/profileMember';
 
   static const notification = '/notification';

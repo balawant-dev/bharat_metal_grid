@@ -8,7 +8,9 @@ import '../../../core/network/network_utils.dart';
 import '../../../core/services/secure_storage_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import '../../auth/register/model/memberRegisterModel.dart';
 import '../model/leaderShipModel.dart';
+import '../model/postLeaderShipModel.dart';
 
 
 
@@ -37,5 +39,79 @@ class LeaderShipRepo {
     }
   }
 
+  Future<PostLeaderShipModel> postLeaderShipApi({
+    required BuildContext context,
+    required String name,
+    required String designation ,
 
+    required File? profileImg ,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        "name": name,
+        "designation": designation ,//  enum: ["President", "Vice-President", "Secretary", "Treasurer"],
+
+
+
+        if (profileImg != null)
+          "profileImg": await MultipartFile.fromFile(
+            profileImg.path,
+            filename: profileImg.path.split('/').last,
+          ),
+      });
+      // 👇 BODY PRINT HERE
+      debugPrint("========== PATCH BODY ==========");
+      for (var field in formData.fields) {
+        debugPrint("${field.key} : ${field.value}");
+      }
+      for (var file in formData.files) {
+        debugPrint("${file.key} : ${file.value.filename}");
+      }
+      debugPrint("================================");
+      final response = await _api.postMultipart(
+        ApiConstants.leadership,
+        data: formData,
+        isMultipart: true, // 👈 IMPORTANT
+        requiresAuth: true
+      );
+
+      return PostLeaderShipModel.fromJson(response);
+    } on DioException catch (e) {
+      if (e.error is NoInternetException) {
+        showNoInternetScreen(
+          context,
+          onRetry:
+              () => postLeaderShipApi(
+            context: context,
+            name: name,
+            profileImg: profileImg,
+            designation: designation,
+
+
+
+          ),
+        );
+        throw NoInternetException();
+      } else if (e.error is ServerException) {
+        showServerErrorScreen(
+          context,
+          onRetry:
+              () => postLeaderShipApi(
+                context: context,
+                name: name,
+                profileImg: profileImg,
+                designation: designation,
+          ),
+        );
+        throw ServerException();
+      } else if (e.error is UnauthorizedException) {
+        await SecureStorageService.logout(context);
+        throw UnauthorizedException();
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      throw ApiException(0, e.toString());
+    }
+  }
 }

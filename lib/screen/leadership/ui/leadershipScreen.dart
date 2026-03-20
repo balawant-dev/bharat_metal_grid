@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router/navigation/routes.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../../widget/customAppbar.dart';
 import '../bloc/leaderShipBloc.dart';
@@ -34,6 +36,9 @@ class _LeadershipScreenState extends State<LeadershipScreen> {
         showBackButton: true,
         isHome: true,
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        context.push(Routes.postLeaderShip);
+      },child: Icon(Icons.add,color: Colors.white,),),
       body: BlocBuilder<LeaderShipBloc, LeaderShipState>(
         builder: (context, state) {
           if (state.isLoading) {

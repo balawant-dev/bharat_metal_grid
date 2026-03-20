@@ -20,6 +20,7 @@ static const String baseUrl = 'http://159.89.146.245:7007/';
 
     static const String userProfileImage = 'api/user/userProfileImage';
 static const String memberRegistration = 'api/user/register-member';
+static const String leadership = 'api/user/leadership';
 static const String post = 'api/user/post';
 static const String membershipAssignment = 'api/user/membership-assignment';
 static const String postReaction = 'api/user/post-reaction';

@@ -7,6 +7,7 @@ class LeaderShipState extends Equatable {
   final bool isLoading;
   final bool isUpdateLoading;
   final String? errorMessage;
+  final String? successMessage;
   final LeaderShipModel? leaderShipModel;
 
   // final UpdateProfileModel? updateProfileModel;
@@ -17,6 +18,7 @@ class LeaderShipState extends Equatable {
 
   const LeaderShipState({
     this.errorMessage,
+    this.successMessage,
     this.leaderShipModel,
 
     this.isLoading = false,
@@ -30,6 +32,7 @@ class LeaderShipState extends Equatable {
     bool? isLoading,
     bool? isUpdateLoading,
     String? errorMessage,
+    String? successMessage,
     LeaderShipModel? leaderShipModel,
 
 
@@ -39,6 +42,7 @@ class LeaderShipState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isUpdateLoading: isUpdateLoading ?? this.isUpdateLoading,
       errorMessage: errorMessage ?? this.errorMessage,
+      successMessage: successMessage ?? this.successMessage,
       leaderShipModel: leaderShipModel ?? this.leaderShipModel,
 
 
@@ -48,5 +52,5 @@ class LeaderShipState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [isLoading, isUpdateLoading,errorMessage,];
+  List<Object?> get props => [isLoading, isUpdateLoading,errorMessage,successMessage];
 }

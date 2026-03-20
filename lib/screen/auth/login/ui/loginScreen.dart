@@ -1,4 +1,3 @@
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,14 +8,13 @@ import '../../../../app/theme/color_resource.dart';
 
 import 'package:intl_phone_field/intl_phone_field.dart';
 
-
+import '../../../../widget/motionToastHelper.dart';
 import '../../../../widget/primary_button.dart';
 
 import '../../../settings/appSettings/appSettings.dart';
 import '../bloc/loginBloc.dart';
 import '../bloc/loginEvent.dart';
 import '../bloc/loginState.dart';
-
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -55,16 +53,22 @@ class _LoginScreenState extends State<LoginScreen> {
     //final loginVM = Provider.of<LogInViewModel>(context);
 
     return Scaffold(
-      backgroundColor:   Color(0xFFF2F2F2),
+      backgroundColor: Color(0xFFF2F2F2),
       body: BlocListener<SignInBloc, SignInState>(
         listener: (context, state) async {
           if (state.isSuccess) {
             Nav.push(context, Routes.otp, extra: mobileController.text);
           }
           if (state.hasError && state.errorMessage != null) {
-            ScaffoldMessenger.of(
+            ToastHelper.show(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+              message:
+              state.errorMessage!,
+              type: ToastType.warning,
+            );
+            // ScaffoldMessenger.of(
+            //   context,
+            // ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             context.read<SignInBloc>().add(const ResetSendOtpEvent());
           }
 
@@ -80,15 +84,13 @@ class _LoginScreenState extends State<LoginScreen> {
             final bloc = context.read<SignInBloc>();
             return SafeArea(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(
-       12
-                ),
+                padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
-                    SizedBox(height: 50,),
+                    SizedBox(height: 50),
                     Container(
                       //width: width*0.9,
-                  //    height: height,
+                      //    height: height,
                       clipBehavior: Clip.antiAlias,
                       padding: EdgeInsets.all(12),
 
@@ -118,14 +120,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         // mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                      SizedBox(height: 15,),
+                          SizedBox(height: 15),
                           // Skip button (top-right)
                           // Image.asset("assets/images/appLogo.png",scale: 4,),
                           Image.asset("assets/images/appLogo.png", scale: 7),
 
                           SizedBox(height: height * 0.015),
                           SizedBox(
-                            width: width*0.6,
+                            width: width * 0.6,
                             child: Text(
                               'Empowering India’s Metal Industry',
                               textAlign: TextAlign.center,
@@ -142,12 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           const SizedBox(height: 25),
                           SizedBox(
-                            width: width*0.7,
+                            width: width * 0.7,
                             child: Text(
                               'Access a unified platform for trade associations and industrial excellence.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: const Color(0xFF404040) /* Labels---Vibrant---Controls-Primary */,
+                                color: const Color(
+                                  0xFF404040,
+                                ) /* Labels---Vibrant---Controls-Primary */,
                                 fontSize: 14,
                                 fontFamily: 'Poppins',
                                 fontWeight: FontWeight.w400,
@@ -160,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           // White Card Section
                           Card(
                             elevation: 2,
-                            shadowColor: ColorResource.darkText.withOpacity(0.5),
+                            shadowColor: ColorResource.darkText.withOpacity(
+                              0.5,
+                            ),
                             child: IntlPhoneField(
                               controller: mobileController,
 
@@ -204,27 +210,44 @@ class _LoginScreenState extends State<LoginScreen> {
                           // OTP Field
                           const SizedBox(height: 25),
                           CommonAppButton(
-                            text:  "Send OTP",
+                            text: "Send OTP",
                             isLoading: state.isLoading,
-                            onPressed: state.isLoading
-                                ? null
-                                : () {
-                              if (!_agreedToTerms) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Please accept Terms & Conditions"),
-                                  ),
-                                );
-                                return;
-                              }
+                            onPressed:
+                                state.isLoading
+                                    ? null
+                                    : () {
+                              // if(mobileController.text.isEmpty||mobileController.text.length!=10){
+                              //   ToastHelper.show(
+                              //     context,
+                              //     message:
+                              //     "Please Enter 10 Digit Mobile Number",
+                              //     type: ToastType.warning,
+                              //   );
+                              // }
+                                      if (!_agreedToTerms) {
+                                        //
+                                        ToastHelper.show(
+                                          context,
+                                          message:
+                                              "Please accept Terms & Conditions",
+                                          type: ToastType.warning,
+                                        );
+                                        // ScaffoldMessenger.of(context).showSnackBar(
+                                        //   const SnackBar(
+                                        //     content: Text("Please accept Terms & Conditions"),
+                                        //   ),
+                                        // );
+                                        return;
+                                      }
 
-                              bloc.add(
-                                SendOtpEvent(
-                                  mobileNumber: mobileController.text.trim(),
-                                  context: context,
-                                ),
-                              );
-                            },
+                                      bloc.add(
+                                        SendOtpEvent(
+                                          mobileNumber:
+                                              mobileController.text.trim(),
+                                          context: context,
+                                        ),
+                                      );
+                                    },
                             // onPressed:
                             //     state.isLoading
                             //         ? null
@@ -239,14 +262,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             //         },
                           ),
 
-
                           const SizedBox(height: 20),
 
                           Container(
-                            width: width*0.8,
+                            width: width * 0.8,
                             height: 28,
                             decoration: ShapeDecoration(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(2),
+                              ),
                             ),
                             child: Stack(
                               children: [
@@ -259,7 +283,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'I have read and agree to the ',
+                                            text:
+                                                'I have read and agree to the ',
                                             style: TextStyle(
                                               color: const Color(0xFF252525),
                                               fontSize: 10,
@@ -271,27 +296,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                           TextSpan(
                                             text: 'Terms & Conditions',
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap = () async{
-                                                await AppSettings.initUserType();
-                                                Nav.push(context, Routes.terms2);
-                                                print("Terms clicked");
+                                            recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () async {
+                                                    await AppSettings.initUserType();
+                                                    Nav.push(
+                                                      context,
+                                                      Routes.terms2,
+                                                    );
+                                                    print("Terms clicked");
 
-                                                /// 👉 Navigate karo
-                                                // Navigator.push(context, MaterialPageRoute(builder: (_) => TermsScreen()));
+                                                    /// 👉 Navigate karo
+                                                    // Navigator.push(context, MaterialPageRoute(builder: (_) => TermsScreen()));
 
-                                                /// ya
-                                                // navPush(context: context, action: TermsScreen());
-                                              },
+                                                    /// ya
+                                                    // navPush(context: context, action: TermsScreen());
+                                                  },
                                             style: TextStyle(
                                               color: const Color(0xFF1135A4),
                                               fontSize: 10,
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w700,
-                                         //     textDecoration: TextDecoration.underline,
+                                              //     textDecoration: TextDecoration.underline,
                                               height: 1.40,
                                               letterSpacing: -0.24,
-
                                             ),
                                           ),
                                           TextSpan(
@@ -329,25 +357,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                           TextSpan(
                                             text: 'Privacy Policy',
-                                            recognizer: TapGestureRecognizer()
-                                              ..onTap = () async{
-                                                await AppSettings.initUserType();
-                                                Nav.push(context, Routes.privacy2);
+                                            recognizer:
+                                                TapGestureRecognizer()
+                                                  ..onTap = () async {
+                                                    await AppSettings.initUserType();
+                                                    Nav.push(
+                                                      context,
+                                                      Routes.privacy2,
+                                                    );
 
-                                                print('Privacy Policy',);
+                                                    print('Privacy Policy');
 
-                                                /// 👉 Navigate karo
-                                                // Navigator.push(context, MaterialPageRoute(builder: (_) => TermsScreen()));
+                                                    /// 👉 Navigate karo
+                                                    // Navigator.push(context, MaterialPageRoute(builder: (_) => TermsScreen()));
 
-                                                /// ya
-                                                // navPush(context: context, action: TermsScreen());
-                                              },
+                                                    /// ya
+                                                    // navPush(context: context, action: TermsScreen());
+                                                  },
                                             style: TextStyle(
                                               color: const Color(0xFF1135A4),
                                               fontSize: 10,
                                               fontFamily: 'Roboto',
                                               fontWeight: FontWeight.w700,
-                                            //  textDecoration: TextDecoration.underline,
+                                              //  textDecoration: TextDecoration.underline,
                                               height: 1.40,
                                               letterSpacing: -0.24,
                                             ),
@@ -357,51 +389,46 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                   ),
                                 ),
-                            Positioned(
-                              left: 0,
-                              top: 2,
-                              child:   GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _agreedToTerms = !_agreedToTerms;
-                                  });
-                                },
+                                Positioned(
+                                  left: 0,
+                                  top: 2,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _agreedToTerms = !_agreedToTerms;
+                                      });
+                                    },
 
-
-                                child: Container(
-                                  width: 18,
-                                  height: 18,
-                                  margin: const EdgeInsets.only(top: 2),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2),
-                                    border: Border.all(
-                                      color: _agreedToTerms
-                                          ? ColorResource.primaryColor
-                                          : Color(0xFFA4A4A4),
-                                      width: 1,
+                                    child: Container(
+                                      width: 18,
+                                      height: 18,
+                                      margin: const EdgeInsets.only(top: 2),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(2),
+                                        border: Border.all(
+                                          color:
+                                              _agreedToTerms
+                                                  ? ColorResource.primaryColor
+                                                  : Color(0xFFA4A4A4),
+                                          width: 1,
+                                        ),
+                                        color: Colors.transparent,
+                                      ),
+                                      child:
+                                          _agreedToTerms
+                                              ? Icon(
+                                                Icons.check_rounded,
+                                                size: 15,
+                                                color:
+                                                    ColorResource.primaryColor,
+                                              )
+                                              : null,
                                     ),
-                                    color: Colors.transparent,
-
                                   ),
-                                  child: _agreedToTerms
-                                      ? Icon(
-                                    Icons.check_rounded,
-                                    size: 15,
-                                    color: ColorResource.primaryColor,
-                                  )
-                                      : null,
                                 ),
-                              ),
-                            ),
-
                               ],
                             ),
-                          )
-
-
-
-
-
+                          ),
                         ],
                       ),
                     ),
@@ -412,7 +439,6 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
       ),
-
     );
   }
 }

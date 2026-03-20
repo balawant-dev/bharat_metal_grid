@@ -94,6 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
           userName = await SecureStorageService.getUserName() ?? "";
 
           userProfileImage = await SecureStorageService.getUserProfileImage() ?? "";
+          context.read<HomeBloc>().add(FetchBannerEvent(context: context));
 
         },
         child: BlocConsumer<HomeBloc, HomeState>(
@@ -108,9 +109,12 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           builder: (context, state) {
             AppSettings.initUserType();
-            if (state.isLoading) {
-              return const HomeSkeleton();
+            if (state.isLoading && state.getBannerModel == null) {
+              return const HomeSkeleton(); // 👈 only first time
             }
+            // if (state.isLoading) {
+            //   return const HomeSkeleton();
+            // }
 
             /// ❌ SAFETY CHECK
             if (state.latestNoticesModel == null ||
@@ -119,258 +123,273 @@ class _HomeScreenState extends State<HomeScreen> {
               return HomeSkeleton();
             }
 
-            return Builder(
-              builder: (context) {
-                return CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      pinned: true,
-                      expandedHeight: 300.0,
-                      backgroundColor: ColorResource.white,
+            return Stack(
+              children: [
+                if (state.isLoading)
+                  Positioned(
+                    top: 100,
+                    left: 0,
+                    right: 0,
+                    child: LinearProgressIndicator(
+                      minHeight: 3,
+                      backgroundColor: Colors.red,
+                      valueColor: AlwaysStoppedAnimation(Colors.greenAccent),
+                    ),
+                  ),
+                Builder(
+                  builder: (context) {
+                    return CustomScrollView(
+                      slivers: [
+                        SliverAppBar(
+                          pinned: true,
+                          expandedHeight: 300.0,
+                          backgroundColor: ColorResource.white,
 
-                      automaticallyImplyLeading: false,
-                      // backgroundColor: Color(0xFF062E7E),
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
+                          automaticallyImplyLeading: false,
+                          // backgroundColor: Color(0xFF062E7E),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              GestureDetector(
-                                onTap: () {
-                                  print("Open drawer");
-                                  Scaffold.of(context).openDrawer();
-                                },
-                                child: Container(
-                                  height: 45,
-                                  width: 45,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(100),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      print("Open drawer");
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                    child: Container(
+                                      height: 45,
+                                      width: 45,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(100),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
 
-                                    child: Image.network(
-                                      "${ApiConstants.baseUrl}${userProfileImage}",
-                                      height: 30,
-                                      fit: BoxFit.fill,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(
-                                          "assets/icon/profileAvatar.png",
+                                        child: Image.network(
+                                          "${ApiConstants.baseUrl}${userProfileImage}",
                                           height: 30,
                                           fit: BoxFit.fill,
-                                          //       color: Colors.white,
-                                        );
-                                        ;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    getGreeting(),
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  FutureBuilder(
-                                    future: AppSettings.initUserType(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState !=
-                                          ConnectionState.done) {
-                                        return SizedBox();
-                                        // return const CircularProgressIndicator();
-                                      }
-                                      return Text(
-                                       "${userName}",
-                                        style: TextStyle(
-                                          color: const Color(0xFFE0E4C8),
-                                          fontSize: 12,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      );
-                                    },
-                                  ),
-
-                                  // Text(
-                                  //   "${AppSettings.userName}",
-                                  //   // 'Rahul!',
-                                  //   style: TextStyle(
-                                  //     color: const Color(0xFFE0E4C8),
-                                  //     fontSize: 12,
-                                  //     fontFamily: 'Poppins',
-                                  //     fontWeight: FontWeight.w500,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Nav.push(
-                                context,
-                                Routes.notification,
-                                //extra: widget.isAgent,
-                              );
-                            },
-                            child: Image.asset(
-                              "assets/icon/notification.png",
-                              scale: 3.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                      flexibleSpace: DecoratedBox(
-                        // ← key wrapper for persistent gradient
-                        decoration: const ShapeDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment(-0.00, 0.50),
-                            end: Alignment(1.00, 0.50),
-                            colors: [Color(0xFF2D5FC0), Color(0xFF062E7E)],
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(90),
-                            ),
-                          ),
-                        ),
-                        child: FlexibleSpaceBar(
-                          background: Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(-0.00, 0.50),
-                                end: Alignment(1.00, 0.50),
-                                colors: [
-                                  const Color(0xFF2D5FC0),
-                                  const Color(0xFF062E7E),
-                                ],
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(93),
-                                ),
-                              ),
-                            ),
-                            child: SafeArea(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Greeting + Bell
-                                  const SizedBox(height: 70),
-                                  Container(
-                                    width: width,
-                                    height: 40,
-                                    //  clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        'Metal rate: Silver- 300000/- kg | Gold 24 CRT - 14000/10gm',
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 13,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w500,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.asset(
+                                              "assets/icon/profileAvatar.png",
+                                              height: 30,
+                                              fit: BoxFit.fill,
+                                              //       color: Colors.white,
+                                            );
+                                            ;
+                                          },
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 15),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          children: [
-                                            SizedBox(
-                                              width: 180,
-                                              child: OverlappingAvatars(),
-                                            ),
-                                            SizedBox(height: 10),
-                                            SizedBox(
-                                              width: 135,
-                                              child: Text(
-                                                'Members Already Joined',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 15),
-                                            CommonAppButton(
-                                              width: 150,
-                                              height: 40,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w500,
-                                              text: "Renew Now    →",
-                                              onPressed: () {},
-                                            ),
-                                          ],
+                                  SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        getGreeting(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
                                         ),
-                                        CircleProgressRingScreen(),
-                                      ],
+                                      ),
+                                      SizedBox(width: 8),
+                                      FutureBuilder(
+                                        future: AppSettings.initUserType(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState !=
+                                              ConnectionState.done) {
+                                            return SizedBox();
+                                            // return const CircularProgressIndicator();
+                                          }
+                                          return Text(
+                                           "${userName}",
+                                            style: TextStyle(
+                                              color: const Color(0xFFE0E4C8),
+                                              fontSize: 12,
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          );
+                                        },
+                                      ),
+
+                                      // Text(
+                                      //   "${AppSettings.userName}",
+                                      //   // 'Rahul!',
+                                      //   style: TextStyle(
+                                      //     color: const Color(0xFFE0E4C8),
+                                      //     fontSize: 12,
+                                      //     fontFamily: 'Poppins',
+                                      //     fontWeight: FontWeight.w500,
+                                      //   ),
+                                      // ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Nav.push(
+                                    context,
+                                    Routes.notification,
+                                    //extra: widget.isAgent,
+                                  );
+                                },
+                                child: Image.asset(
+                                  "assets/icon/notification.png",
+                                  scale: 3.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                          flexibleSpace: DecoratedBox(
+                            // ← key wrapper for persistent gradient
+                            decoration: const ShapeDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment(-0.00, 0.50),
+                                end: Alignment(1.00, 0.50),
+                                colors: [Color(0xFF2D5FC0), Color(0xFF062E7E)],
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(90),
+                                ),
+                              ),
+                            ),
+                            child: FlexibleSpaceBar(
+                              background: Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment(-0.00, 0.50),
+                                    end: Alignment(1.00, 0.50),
+                                    colors: [
+                                      const Color(0xFF2D5FC0),
+                                      const Color(0xFF062E7E),
+                                    ],
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(93),
                                     ),
                                   ),
+                                ),
+                                child: SafeArea(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Greeting + Bell
+                                      const SizedBox(height: 70),
+                                      Container(
+                                        width: width,
+                                        height: 40,
+                                        //  clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'Metal rate: Silver- 300000/- kg | Gold 24 CRT - 14000/10gm',
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: 15),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 12.0),
+                                        child: Row(
+                                          children: [
+                                            Column(
+                                              children: [
+                                                SizedBox(
+                                                  width: 180,
+                                                  child: OverlappingAvatars(),
+                                                ),
+                                                SizedBox(height: 10),
+                                                SizedBox(
+                                                  width: 135,
+                                                  child: Text(
+                                                    'Members Already Joined',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 15),
+                                                // CommonAppButton(
+                                                //   width: 150,
+                                                //   height: 40,
+                                                //   fontSize: 13,
+                                                //   fontWeight: FontWeight.w500,
+                                                //   text: "Renew Now    →",
+                                                //   onPressed: () {},
+                                                // ),
+                                              ],
+                                            ),
+                                            CircleProgressRingScreen(),
+                                          ],
+                                        ),
+                                      ),
 
-                                  //     const Spacer(),
+                                      //     const Spacer(),
 
-                                  // Metal Rates
+                                      // Metal Rates
 
-                                  // Renew Button
-                                ],
+                                      // Renew Button
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
 
-                    // ─── Body Content ────────────────────────────────────────────────────
-                    SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // ─── Body Content ────────────────────────────────────────────────────
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                        // "👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏"
-                        children: [
+                            // "👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏"
+                            children: [
 
-                          SizedBox(height: 15),
-                          bannerCarousel(bannerList: state.getBannerModel!),
-                          SizedBox(height: 15),
-                          quickSection(context: context),
-                          SizedBox(height: 10),
-                          industryNewsSection(
-                            context: context,
-                            industryNewsModel: state.industryNewsModel!,
+                              SizedBox(height: 15),
+                              bannerCarousel(bannerList: state.getBannerModel!),
+                              SizedBox(height: 15),
+                              quickSection(context: context),
+                              SizedBox(height: 10),
+                              industryNewsSection(
+                                context: context,
+                                industryNewsModel: state.industryNewsModel!,
+                              ),
+                              SizedBox(height: 15),
+                              latestNoticesSection(
+                                context: context,
+                                latestNoticesModel: state.latestNoticesModel!,
+                              ),
+                              SizedBox(height: 15),
+                              gallerySection(
+                                context: context,
+                                galleryListModel: state.galleryListModel!,
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 15),
-                          latestNoticesSection(
-                            context: context,
-                            latestNoticesModel: state.latestNoticesModel!,
-                          ),
-                          SizedBox(height: 15),
-                          gallerySection(
-                            context: context,
-                            galleryListModel: state.galleryListModel!,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-              },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             );
           },
         ),
@@ -381,69 +400,59 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget quickSection({required BuildContext context}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: AnimationLimiter(
-        child: Column(
-          children: AnimationConfiguration.toStaggeredList(
-            duration: const Duration(seconds: 2),
-            childAnimationBuilder:
-                (widget) => SlideAnimation(
-                  verticalOffset: 300.0,
-                  child: ScaleAnimation(child: widget),
-                ),
+      child: Column(
+        children: [
+          titleWidget(title: 'Quick Actions', onTap: () {}),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              titleWidget(title: 'Quick Actions', onTap: () {}),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  cardDetails(
-                    context: context,
-                    image: 'assets/icon/membership.png',
-                    title: 'Membership \nInformation',
-                    color: Color(0xFFFFF4E5),
-                    onTap: (){
-                      Nav.push(context, Routes.membershipAssignment);
-                    }
-                  ),
-                  cardDetails(
-                    context: context,
-                    image: 'assets/icon/postmember.png',
-                    title: 'Member Post',
-                    color: Color(0xFFE5F0FF),
-                    onTap: (){
-                      Nav.push(context, Routes.post);
-                    }
-
-                  ),
-                ],
+              cardDetails(
+                  context: context,
+                  image: 'assets/icon/membership.png',
+                  title: 'Membership \nInformation',
+                  color: Color(0xFFFFF4E5),
+                  onTap: (){
+                    Nav.push(context, Routes.membershipAssignment);
+                  }
               ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  cardDetails(
-                    context: context,
-                    image: 'assets/icon/indursty.png',
-                    title: 'Industry \nReport',
-                    color: Color(0xFFE9F9F0),
-                      onTap: (){
-                        Nav.push(context, Routes.industryNews);
-                      }
-                  ),
-                  cardDetails(
-                    context: context,
-                    image: 'assets/icon/complaint.png',
-                    title: 'Complaint & \nSupport',
-                    color: Color(0xFFF3E8FF),
-                      onTap: (){
-                        Nav.push(context, Routes.complaintSupport);
-                      }
-                  ),
-                ],
+              cardDetails(
+                  context: context,
+                  image: 'assets/icon/postmember.png',
+                  title: 'Member Post',
+                  color: Color(0xFFE5F0FF),
+                  onTap: (){
+                    Nav.push(context, Routes.post);
+                  }
+
               ),
             ],
           ),
-        ),
+          SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              cardDetails(
+                  context: context,
+                  image: 'assets/icon/indursty.png',
+                  title: 'Industry \nReport',
+                  color: Color(0xFFE9F9F0),
+                  onTap: (){
+                    Nav.push(context, Routes.industryNews);
+                  }
+              ),
+              cardDetails(
+                  context: context,
+                  image: 'assets/icon/complaint.png',
+                  title: 'Complaint & \nSupport',
+                  color: Color(0xFFF3E8FF),
+                  onTap: (){
+                    Nav.push(context, Routes.complaintSupport);
+                  }
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -526,22 +535,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 scrollDirection: Axis.horizontal,
                 itemCount: industryNewsModel.data!.length,
                 itemBuilder: (context, index) {
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(seconds: 1),
-                    child: SlideAnimation(
-                      horizontalOffset: 500.0,
-                      child: FadeInAnimation(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 12),
-                          child: IndustryNewsCard(
-                            id: industryNewsModel.data![index].sId??"NO Id",
-                            image:
-                                "${ApiConstants.baseUrl}${industryNewsModel.data![index].coverImage}",
-                            title: industryNewsModel.data![index].title!,
-                          ),
-                        ),
-                      ),
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: IndustryNewsCard(
+                      id: industryNewsModel.data![index].sId??"NO Id",
+                      image:
+                      "${ApiConstants.baseUrl}${industryNewsModel.data![index].coverImage}",
+                      title: industryNewsModel.data![index].title!,
                     ),
                   );
                 },
@@ -569,21 +569,13 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           SizedBox(height: 10),
-          AnimationConfiguration.synchronized(
-            duration: const Duration(seconds: 3),
-            child: SlideAnimation(
-              verticalOffset: 200,
-              child: FadeInAnimation(
-                child: LatestNoticesSection(
-                  id: latestNoticesModel.data!.first.sId!,
-                  image:
-                      "${ApiConstants.baseUrl}${latestNoticesModel.data!.first.coverImage}",
-                  title: latestNoticesModel.data!.first.title!,
-                  des: latestNoticesModel.data!.first.shortDescription!,
-                  pdfFile:"${ApiConstants.baseUrl}${latestNoticesModel.data!.first.pdfFile}",
-                ),
-              ),
-            ),
+          LatestNoticesSection(
+            id: latestNoticesModel.data!.first.sId!,
+            image:
+            "${ApiConstants.baseUrl}${latestNoticesModel.data!.first.coverImage}",
+            title: latestNoticesModel.data!.first.title!,
+            des: latestNoticesModel.data!.first.shortDescription!,
+            pdfFile:"${ApiConstants.baseUrl}${latestNoticesModel.data!.first.pdfFile}",
           ),
 
           SizedBox(height: 5),
@@ -621,43 +613,35 @@ class _HomeScreenState extends State<HomeScreen> {
               itemCount: galleryListModel.data!.length,
               itemBuilder: (context, index) {
                 final image = galleryListModel.data![index];
-                return AnimationConfiguration.staggeredList(
-                  position: index,
-                  duration: const Duration(milliseconds: 450),
-                  child: ScaleAnimation(
-                    child: FadeInAnimation(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: GestureDetector(
-                          onTap: (){
-                            context.push(
-                              Routes.fullGallery,
-                              extra: {
-                                'list': galleryListModel.data!, // poora list
-                                'index': index,      // jo image click hua
-                              },
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              "${ApiConstants.baseUrl}${image.images!.first}",
-                              // 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEzkNQnD_EVTXzy95gT21Z61LupDx4Z6SpfE5XHI7HOxsZJy5x',
-                              width: 100,
-                              height: 80,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.network(
-                                  // "${ApiConstants.baseUrl}${image}",
-                                  'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEzkNQnD_EVTXzy95gT21Z61LupDx4Z6SpfE5XHI7HOxsZJy5x',
-                                  width: 100,
-                                  height: 80,
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            ),
-                          ),
-                        ),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: GestureDetector(
+                    onTap: (){
+                      context.push(
+                        Routes.fullGallery,
+                        extra: {
+                          'list': galleryListModel.data!, // poora list
+                          'index': index,      // jo image click hua
+                        },
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        "${ApiConstants.baseUrl}${image.images!.first}",
+                        // 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEzkNQnD_EVTXzy95gT21Z61LupDx4Z6SpfE5XHI7HOxsZJy5x',
+                        width: 100,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.network(
+                            // "${ApiConstants.baseUrl}${image}",
+                            'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQEzkNQnD_EVTXzy95gT21Z61LupDx4Z6SpfE5XHI7HOxsZJy5x',
+                            width: 100,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                   ),
