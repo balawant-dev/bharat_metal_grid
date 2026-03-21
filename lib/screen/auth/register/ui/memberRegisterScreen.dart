@@ -187,16 +187,16 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
             // Nav.push(context, Routes.otp, extra: mobileController.text);
           }
           if (state.hasError && state.errorMessage != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            // ScaffoldMessenger.of(
+            //   context,
+            // ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             context.read<RegisterBloc>().add(const ResetRegisterEvent());
           }
 
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            // ScaffoldMessenger.of(
+            //   context,
+            // ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
           }
           context.read<RegisterBloc>().emit(state.copyWith(errorMessage: null));
         },
@@ -215,6 +215,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
             return SingleChildScrollView(
               padding: EdgeInsets.all(16),
               child: Column(
+
                 children: [
                 GestureDetector(
                 onTap: showImagePicker,
@@ -261,6 +262,9 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                   children: [
                     CommonTextFormField(controller: nameController, hintText: "Full name"),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Gender" ),
+
+                    SizedBox(height: 5,),
 
                     // Gender
                     Container(
@@ -292,8 +296,10 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
+                    titleWidget(title:"State" ),
 
 
+                    SizedBox(height: 5,),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                       decoration: BoxDecoration(
@@ -313,6 +319,9 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       ),
                     ),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Preferred Language" ),
+
+                    SizedBox(height: 5,),
 
                     // Preferred Language
                     Container(
@@ -363,6 +372,8 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500,)),
                   children: [
+                    titleWidget(title:"Organisation Type" ),
+                    SizedBox(height: 5,),
                     // Type
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -373,7 +384,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          hint:  Text("Type",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85)),),
+                          hint:  Text("Organisation Type",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85)),),
                           value: orgTypeController.text.isEmpty ? null : orgTypeController.text,
                           items: ["Company", "Firm", "Proprietorship", "Others"]
                               .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -385,7 +396,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     const SizedBox(height: 16),
 
                     CommonTextFormField(controller: designation, hintText: "Designation"),
-                    const SizedBox(height: 16),         CommonTextFormField(controller: orgNameController, hintText: "Name"),
+                    const SizedBox(height: 16),         CommonTextFormField(controller: orgNameController, hintText: "Organization Name"),
                     const SizedBox(height: 16),
                     CommonTextFormField(controller: parentOrgController, hintText: "Parent Organization Name"),
                     const SizedBox(height: 16),
@@ -618,7 +629,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
       return false;
     }  if (selectedImage == null) {
       ToastHelper.show(context,
-          message: "Please select profile image", type: ToastType.warning);
+          message: "Please upload profile image", type: ToastType.warning);
       return false;
     }
 
@@ -715,6 +726,13 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
     }
 
     return true;
+  }
+  Widget titleWidget({required String title}){
+    return    Row(
+      children: [
+        Text(title,style: TextStyle(fontSize: 12,color: Colors.black),),
+      ],
+    );
   }
 
 }

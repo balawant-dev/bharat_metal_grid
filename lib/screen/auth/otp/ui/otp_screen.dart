@@ -9,6 +9,7 @@ import 'package:pinput/pinput.dart';
 import '../../../../app/router/navigation/nav.dart';
 import '../../../../app/router/navigation/routes.dart';
 import '../../../../app/theme/color_resource.dart';
+import '../../../../widget/motionToastHelper.dart';
 import '../../../../widget/primary_button.dart';
 
 import '../bloc/otpBloc.dart';
@@ -81,12 +82,39 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<OTPBloc, OTPState>(
-        listener: (context, state) {
-          if (state.isSuccess) {
-            // Nav.go(context, Routes.rideSelect, extra: component.phone);
-         //   Nav.go(context, Routes.rideSelect);
-          }
-        },
+          listener: (context, state) {
+
+            if (state.successMessage != null) {
+              ToastHelper.show(
+                context,
+                message: state.successMessage!,
+                type: ToastType.success,
+              );
+            }
+
+            // if (state.errorMessage != null) {
+            //   ToastHelper.show(
+            //     context,
+            //     message: state.errorMessage!,
+            //     type: ToastType.error,
+            //   );
+            // }
+
+            if (state.warningMessage != null) {
+              ToastHelper.show(
+                context,
+                message: state.warningMessage!,
+                type: ToastType.warning,
+              );
+            }
+
+            if (state.isSuccess) {
+              // Navigation already bloc me hai
+            }
+
+            // ❗ IMPORTANT
+            context.read<OTPBloc>().add(const ResetVerifyOtpEvent());
+          },
         child: BlocBuilder<OTPBloc, OTPState>(
           builder: (context, state) {
             final bloc = context.read<OTPBloc>();

@@ -28,15 +28,15 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
     VerifyOtpEvent event,
     Emitter<OTPState> emit,
   ) async {
-    // if (event.otp!.length != 4) {
-    //   emit(
-    //     state.copyWith(
-    //       isLoading: false,
-    //       errorMessage: "Enter a valid 4 digit OTP",
-    //     ),
-    //   );
-    //   return;
-    // }
+
+    if (event.otp.isEmpty || event.otp.length != 4) {
+      emit(state.copyWith(
+        isLoading: false,
+        warningMessage: "Enter valid 4 digit OTP",
+      ));
+      return;
+    }
+
 
     emit(state.copyWith(isLoading: true));
 
@@ -49,6 +49,11 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
       );
       print("✅ Store1");
       if ( response.success == true) {
+        emit(state.copyWith(
+          isLoading: false,
+          isSuccess: true,
+          successMessage: "OTP verified successfully",
+        ));
         print("✅ Store2");
 
         final userType = response.data!.userType??"Not Avaible";
@@ -117,13 +122,11 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
 
 
       } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: "Invalid credentials",
-            hasError: true,
-          ),
-        );
+        emit(state.copyWith(
+          isLoading: false,
+          hasError: true,
+          errorMessage: "Invalid OTP",
+        ));
       }
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));

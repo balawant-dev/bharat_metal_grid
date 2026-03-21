@@ -4,10 +4,14 @@ class SignInState extends Equatable {
   final bool hasError;
   final bool isLoading;
   final bool isSuccess;
-  final String?errorMessage;
+  final String? successMessage;
+  final String? errorMessage;
+  final String? warningMessage;
 
   SignInState({
+    this.successMessage,
     this.errorMessage,
+    this.warningMessage,
     this.isLoading = false,
     this.hasError = false,
     this.isSuccess = false,
@@ -18,19 +22,24 @@ class SignInState extends Equatable {
      bool? isLoading,
      bool? isSuccess,
      bool? hasError,
-     String?errorMessage,
+    String? successMessage,
+    String? errorMessage,
+    String? warningMessage,
 
 }){
     return SignInState(
       hasError: hasError?? this.hasError,
       isLoading: isLoading?? this.isLoading,
       isSuccess: isSuccess ??this.isSuccess,
-      errorMessage: errorMessage??this.errorMessage,
+      successMessage: successMessage,
+      errorMessage: errorMessage,
+      warningMessage: warningMessage,
 
     );
 
   }
 
-@override
-List<Object?>get props=>[isLoading,errorMessage,hasError,isSuccess];
+  @override
+  List<Object?> get props =>
+      [isLoading, hasError, isSuccess, successMessage, errorMessage, warningMessage];
 }

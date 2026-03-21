@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../widget/customAppbar.dart';
+import '../../../widget/motionToastHelper.dart';
 import '../../../widget/primary_button.dart';
 
 class ComplaintSupportScreen extends StatelessWidget {
@@ -61,11 +62,14 @@ class ComplaintSupportScreen extends StatelessWidget {
             TextField(
               controller: mobileController,
               keyboardType: TextInputType.phone,
+              maxLength: 10,
               decoration: InputDecoration(
-                labelText: "Mobile Number",
+                labelText: "Mobile Number",   counterText: "",
+
                 prefixIcon: const Icon(Icons.phone),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
+
                 ),
               ),
             ),
@@ -89,7 +93,55 @@ class ComplaintSupportScreen extends StatelessWidget {
             const SizedBox(height: 20),
             CommonAppButton(
               text: 'Submit Complaint',
-              onPressed: () {},
+              onPressed: () {
+
+                final email = emailController.text.trim();
+                final mobile = mobileController.text.trim();
+                final remark = remarkController.text.trim();
+
+                // 🔴 Empty check
+                if (email.isEmpty || mobile.isEmpty || remark.isEmpty) {
+                  ToastHelper.show(
+                    context,
+                    message: "Please fill all fields",
+                    type: ToastType.warning,
+                  );
+                  return;
+                }
+
+                // 🔴 Email validation
+                final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+                if (!emailRegex.hasMatch(email)) {
+                  ToastHelper.show(
+                    context,
+                    message: "Enter valid email address",
+                    type: ToastType.warning,
+                  );
+                  return;
+                }
+
+                // 🔴 Mobile validation
+                if (mobile.length != 10) {
+                  ToastHelper.show(
+                    context,
+                    message: "Enter valid 10 digit mobile number",
+                    type: ToastType.warning,
+                  );
+                  return;
+                }
+
+                // ✅ Success
+                ToastHelper.show(
+                  context,
+                  message: "Complaint submitted successfully",
+                  type: ToastType.success,
+                );
+
+                // 👉 Optional: clear fields
+                emailController.clear();
+                mobileController.clear();
+                remarkController.clear();
+              },
             ),
 
             /// Submit Button

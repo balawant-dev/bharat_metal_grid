@@ -402,7 +402,18 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Column(
         children: [
-          titleWidget(title: 'Quick Actions', onTap: () {}),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              CustomText(
+                'Quick Actions',
+                size: 16,
+                weight: FontWeight.w500,
+                color: ColorResource.black,
+              ),
+            ],
+          ),
+          // titleWidget(title: 'Quick Actions', onTap: () {}),
           SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

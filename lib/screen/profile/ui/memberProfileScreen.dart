@@ -302,7 +302,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
                   fontWeight: FontWeight.w500,)),
                 children: [
                   CommonTextFormField(controller: nameController, hintText: "Full name"),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 16),titleWidget(title: "Gender"),
 
                   // Gender
                   Container(
@@ -334,7 +334,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
-
+                  titleWidget(title: "State"),
 
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
@@ -355,6 +355,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  titleWidget(title: "Preferred Language"),
 
                   // Preferred Language
                   Container(
@@ -390,6 +391,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
             const SizedBox(height: 30),
 
 
+
             decorationContainer(
               width: width,
               child: ExpansionTile(
@@ -405,6 +407,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,)),
                 children: [
+                  titleWidget(title: "Organisation type"),
                   // Type
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -415,7 +418,7 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         isExpanded: true,
-                        hint:  Text("Type",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85)),),
+                        hint:  Text("Organisation type",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85)),),
                         value: orgTypeController.text.isEmpty ? null : orgTypeController.text,
                         items: ["Company", "Firm", "Proprietorship", "Others"]
                             .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -610,7 +613,19 @@ class _ProfileMemberScreenState extends State<ProfileMemberScreen> {
 
 
 
-
+  Widget titleWidget({required String title}){
+    return    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(title,style: TextStyle(fontSize: 12,color: Colors.black),),
+          ],
+        ),
+        SizedBox(height: 5,),
+      ],
+    );
+  }
 
 }
 

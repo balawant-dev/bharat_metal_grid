@@ -18,15 +18,11 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     SendOtpEvent event,
     Emitter<SignInState> emit,
   ) async {
-    if (event.mobileNumber == null ||
-        event.mobileNumber!.trim().isEmpty ||
-        event.mobileNumber!.length != 10) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: "Enter a valid 10 digit mobile number",
-        ),
-      );
+    if (event.mobileNumber.isEmpty || event.mobileNumber.length != 10) {
+      emit(state.copyWith(
+        isLoading: false,
+        warningMessage: "Enter valid 10 digit number",
+      ));
       return;
     }
 
@@ -37,25 +33,26 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
         phone: event.mobileNumber,
         context: event.context,
       );
+
       if (response != null && response.success == true) {
-        emit(
-          state.copyWith(
-            errorMessage:  "OTP sent successfully",
-            isLoading: false,
-            isSuccess: true,
-          ),
-        );
+        emit(state.copyWith(
+          isLoading: false,
+          isSuccess: true,
+          successMessage: "OTP sent successfully",
+        ));
       } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: "Invalid credentials",
-            hasError: true,
-          ),
-        );
+        emit(state.copyWith(
+          isLoading: false,
+          hasError: true,
+          errorMessage: "Invalid credentials",
+        ));
       }
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      emit(state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      ));
     }
   }
 }

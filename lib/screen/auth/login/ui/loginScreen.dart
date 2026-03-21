@@ -55,29 +55,38 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFF2F2F2),
       body: BlocListener<SignInBloc, SignInState>(
-        listener: (context, state) async {
-          if (state.isSuccess) {
-            Nav.push(context, Routes.otp, extra: mobileController.text);
-          }
-          if (state.hasError && state.errorMessage != null) {
+        listener: (context, state) {
+
+          if (state.successMessage != null) {
             ToastHelper.show(
               context,
-              message:
-              state.errorMessage!,
-              type: ToastType.warning,
+              message: state.successMessage!,
+              type: ToastType.success,
             );
-            // ScaffoldMessenger.of(
-            //   context,
-            // ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-            context.read<SignInBloc>().add(const ResetSendOtpEvent());
           }
 
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(
+            ToastHelper.show(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+              message: state.errorMessage!,
+              type: ToastType.error,
+            );
           }
-          context.read<SignInBloc>().emit(state.copyWith(errorMessage: null));
+
+          if (state.warningMessage != null) {
+            ToastHelper.show(
+              context,
+              message: state.warningMessage!,
+              type: ToastType.warning,
+            );
+          }
+
+          if (state.isSuccess) {
+            Nav.push(context, Routes.otp, extra: mobileController.text);
+          }
+
+          // Reset after showing
+          context.read<SignInBloc>().emit(SignInState());
         },
         child: BlocBuilder<SignInBloc, SignInState>(
           builder: (context, state) {

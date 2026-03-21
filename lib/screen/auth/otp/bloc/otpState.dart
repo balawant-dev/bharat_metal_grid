@@ -2,7 +2,10 @@ import 'package:equatable/equatable.dart';
 
 class OTPState extends Equatable {
   final bool isLoading;
-  final String?errorMessage;
+
+  final String? successMessage;
+  final String? errorMessage;
+  final String? warningMessage;
 
   final bool isSuccess;
   final bool isAgent;
@@ -15,12 +18,16 @@ class OTPState extends Equatable {
     this.isSuccess = false,
     this.isAgent = false,
     this.isUser = false,
+    this.successMessage,
     this.errorMessage,
+    this.warningMessage,
   });
 
   OTPState copyWith({
      bool? isLoading,
-     String?errorMessage,
+    String? successMessage,
+    String? errorMessage,
+    String? warningMessage,
      bool? isSuccess,
      bool? isAgent,
      bool? isUser,
@@ -29,7 +36,9 @@ class OTPState extends Equatable {
 }){
     return OTPState(
       isLoading: isLoading?? this.isLoading,
-      errorMessage: errorMessage??this.errorMessage,
+        successMessage: successMessage,
+        errorMessage: errorMessage,
+        warningMessage: warningMessage,
       hasError: hasError?? this.hasError,
       isSuccess: isSuccess ??this.isSuccess,
       isAgent: isAgent??this.isAgent,
@@ -37,7 +46,7 @@ class OTPState extends Equatable {
     );
 
   }
-
-@override
-List<Object?>get props=>[isLoading,errorMessage,hasError,isUser,isAgent];
+  @override
+  List<Object?> get props =>
+      [isLoading, isSuccess, hasError, successMessage, errorMessage, warningMessage];
 }
