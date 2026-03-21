@@ -13,6 +13,7 @@ import '../../../../core/constants/api_constants.dart';
 import '../../../../widget/customAppbar.dart';
 import '../../../../widget/customTextField.dart';
 
+import '../../../../widget/motionToastHelper.dart';
 import '../bloc/registerBloc.dart';
 import '../bloc/registerEvent.dart';
 import '../bloc/registerState.dart';
@@ -363,7 +364,7 @@ class _AssociationRegistrationScreenState
                           hintText: "President/Secretary",
                           keyboardType: TextInputType.text,
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 16),titleWidget(title: "State"),
 
                         // State Dropdown
                         Container(
@@ -436,6 +437,7 @@ class _AssociationRegistrationScreenState
                       ),
                       children: [
                         // Type
+                        titleWidget(title:    "Registration Certificate",),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -603,6 +605,7 @@ class _AssociationRegistrationScreenState
                           text: "Complete",
                           isLoading: state.isLoading,
                           onPressed: () {
+                            if (!validateFields()) return;
                             context.read<RegisterBloc>().add(
                               AssociationRegistrationSummitedEvent(
                                 context: context,
@@ -705,4 +708,150 @@ class _AssociationRegistrationScreenState
     "West Bengal",
     "Delhi",
   ];
+  bool validateFields() {
+
+    // Profile Image
+    if (selectedImage == null) {
+      ToastHelper.show(context,
+          message: "Please upload profile image",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Association Name
+    if (associationNameController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter association name",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Govt Registration Number
+    if (govtRegistrationNumber.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter registration number",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Year of Formation
+    if (yearFormationController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter year of formation",
+          type: ToastType.warning);
+      return false;
+    }
+
+    if (yearFormationController.text.length != 4) {
+      ToastHelper.show(context,
+          message: "Enter valid year (e.g. 2020)",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Address
+    if (fullAddressController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter full address",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // City
+    if (cityController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter city",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // State
+    if (selectedState == null || selectedState!.isEmpty) {
+      ToastHelper.show(context,
+          message: "Please select state",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Email
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter email",
+          type: ToastType.warning);
+      return false;
+    }
+
+    final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
+    if (!emailRegex.hasMatch(email)) {
+      ToastHelper.show(context,
+          message: "Enter valid email",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // PIN
+    if (pinController.text.trim().isEmpty ||
+        pinController.text.length != 6) {
+      ToastHelper.show(context,
+          message: "Enter valid 6 digit PIN",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // President/Secretary
+    if (presidentSecretaryController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please enter president/secretary name",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Org Type
+    if (orgTypeController.text.trim().isEmpty) {
+      ToastHelper.show(context,
+          message: "Please select registration certificate type",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Document Upload
+    if (selectedDocument == null) {
+      ToastHelper.show(context,
+          message: "Please upload registration document",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Verified By
+    if (verifiedByApi.isEmpty) {
+      ToastHelper.show(context,
+          message: "Please select verified by date",
+          type: ToastType.warning);
+      return false;
+    }
+
+    // Verified At
+    if (verifiedAtApi.isEmpty) {
+      ToastHelper.show(context,
+          message: "Please select verified at date",
+          type: ToastType.warning);
+      return false;
+    }
+
+    return true;
+  }
+  Widget titleWidget({required String title}){
+    return    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(title,style: TextStyle(fontSize: 12,color: Colors.black),),
+          ],
+        ),
+        SizedBox(height: 5,),
+      ],
+    );
+  }
 }
