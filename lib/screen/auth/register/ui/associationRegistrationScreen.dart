@@ -218,6 +218,59 @@ class _AssociationRegistrationScreenState
         title: "Association Registration",
         showBackButton: true,
       ),
+      bottomNavigationBar: BlocBuilder<RegisterBloc, RegisterState>(
+        builder: (context, state) {
+          return SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: CommonAppButton(
+                text: "Complete",
+                isLoading: state.isLoading,
+                onPressed: () {
+                  if (!validateFields()) return;
+
+                  context.read<RegisterBloc>().add(
+                    AssociationRegistrationSummitedEvent(
+                      context: context,
+                      registrationCertificateType:
+                      orgTypeController.text,
+                      verifiedBy: verifiedByApi,
+                      verifiedAt: verifiedAtApi,
+                      profileImage: selectedImage,
+                      registrationCertificateImage:
+                      selectedDocument,
+                      associationName:
+                      associationNameController.text,
+                      govtLegalRegistrationNumber:
+                      govtRegistrationNumber.text,
+                      city: cityController.text,
+                      fullAddress: fullAddressController.text,
+                      mobile: widget.phone,
+                      pin: pinController.text,
+                      presidentSecretary:
+                      presidentSecretaryController.text,
+                      selectState: selectedState ?? "",
+                      yearFormation:
+                      yearFormationController.text,
+                      email: emailController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
       body: BlocListener<RegisterBloc, RegisterState>(
         listener: (context, state) async {
           if (state.isSuccess) {
@@ -317,54 +370,28 @@ class _AssociationRegistrationScreenState
                       children: [
                         CommonTextFormField(
                           controller: associationNameController,
-                          hintText: "Association Name",
+                          hintText: "Association Name*",
+                        ),
+                        const SizedBox(height: 16),
+                        CommonTextFormField(
+                          controller: emailController,
+                          hintText: "Email ID*",
+                          keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
 
-                        CommonTextFormField(
-                          controller: govtRegistrationNumber,
-                          hintText: "Govt/Legal registration number",
-                          keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 16),
-                        CommonTextFormField(
-                          controller: yearFormationController,
-                          hintText: "Year of formation",
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(height: 16),
+
                         CommonTextFormField(
                           controller: fullAddressController,
-                          hintText: "Full Address",
+                          hintText: "Full Address*",
                           keyboardType: TextInputType.text,
                         ),
                         const SizedBox(height: 16),
                         CommonTextFormField(
                           controller: cityController,
-                          hintText: "City",
+                          hintText: "City*",
                           keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 16),
-
-                        CommonTextFormField(
-                          controller: emailController,
-                          hintText: "Email ID",
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(height: 16),
-                        CommonTextFormField(
-                          controller: pinController,
-                          hintText: "PIN",
-                          maxLength: 6,
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(height: 16),
-                        CommonTextFormField(
-                          controller: presidentSecretaryController,
-                          hintText: "President/Secretary",
-                          keyboardType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 16),titleWidget(title: "State"),
+                        ), const SizedBox(height: 16),titleWidget(title: "State"),
 
                         // State Dropdown
                         Container(
@@ -380,7 +407,7 @@ class _AssociationRegistrationScreenState
                             child: DropdownButton<String>(
                               isExpanded: true,
                               hint: Text(
-                                "Select State",
+                                "Select State*",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 13,
@@ -389,26 +416,54 @@ class _AssociationRegistrationScreenState
                               ),
                               value: selectedState,
                               items:
-                                  indianStates
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(
-                                            e,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
+                              indianStates
+                                  .map(
+                                    (e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(
+                                    e,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 13,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  .toList(),
                               onChanged:
                                   (val) => setState(() => selectedState = val),
                             ),
                           ),
                         ),
+                        const SizedBox(height: 16),
+
+
+                        CommonTextFormField(
+                          controller: pinController,
+                          hintText: "Pin Code*",
+                          maxLength: 6,
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
+                        CommonTextFormField(
+                          controller: govtRegistrationNumber,
+                          hintText: "Govt/Legal registration number",
+                          keyboardType: TextInputType.text,
+                        ),
+                        const SizedBox(height: 16),
+                        CommonTextFormField(
+                          controller: yearFormationController,
+                          hintText: "Year of formation",
+                          keyboardType: TextInputType.number,
+                        ),
+                        const SizedBox(height: 16),
+                        CommonTextFormField(
+                          controller: presidentSecretaryController,
+                          hintText: "President/Secretary",
+                          keyboardType: TextInputType.text,
+                        ),
+
 
                         const SizedBox(height: 24),
                       ],
@@ -600,43 +655,43 @@ class _AssociationRegistrationScreenState
 
 
                         SizedBox(height: 20),
-
-                        CommonAppButton(
-                          text: "Complete",
-                          isLoading: state.isLoading,
-                          onPressed: () {
-                            if (!validateFields()) return;
-                            context.read<RegisterBloc>().add(
-                              AssociationRegistrationSummitedEvent(
-                                context: context,
-                                registrationCertificateType: orgTypeController.text,
-                                verifiedBy:verifiedByApi,
-                                verifiedAt: verifiedAtApi,
-                                profileImage: selectedImage,
-                                registrationCertificateImage: selectedDocument,
-                                associationName:  associationNameController.text,
-                                govtLegalRegistrationNumber: govtRegistrationNumber.text ,
-                                city:cityController.text ,
-                                fullAddress:fullAddressController.text ,
-                                mobile: widget.phone ,
-
-                                pin: pinController.text,
-
-                                presidentSecretary:presidentSecretaryController.text ,
-                                selectState: selectedState??"",
-
-                                yearFormation: yearFormationController.text,
-
-
-
-                                email: emailController.text,
-
-
-
-                              ),
-                            );
-                          },
-                        ),
+                        //
+                        // CommonAppButton(
+                        //   text: "Complete",
+                        //   isLoading: state.isLoading,
+                        //   onPressed: () {
+                        //     if (!validateFields()) return;
+                        //     context.read<RegisterBloc>().add(
+                        //       AssociationRegistrationSummitedEvent(
+                        //         context: context,
+                        //         registrationCertificateType: orgTypeController.text,
+                        //         verifiedBy:verifiedByApi,
+                        //         verifiedAt: verifiedAtApi,
+                        //         profileImage: selectedImage,
+                        //         registrationCertificateImage: selectedDocument,
+                        //         associationName:  associationNameController.text,
+                        //         govtLegalRegistrationNumber: govtRegistrationNumber.text ,
+                        //         city:cityController.text ,
+                        //         fullAddress:fullAddressController.text ,
+                        //         mobile: widget.phone ,
+                        //
+                        //         pin: pinController.text,
+                        //
+                        //         presidentSecretary:presidentSecretaryController.text ,
+                        //         selectState: selectedState??"",
+                        //
+                        //         yearFormation: yearFormationController.text,
+                        //
+                        //
+                        //
+                        //         email: emailController.text,
+                        //
+                        //
+                        //
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
@@ -727,27 +782,27 @@ class _AssociationRegistrationScreenState
     }
 
     // Govt Registration Number
-    if (govtRegistrationNumber.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter registration number",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (govtRegistrationNumber.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter registration number",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Year of Formation
-    if (yearFormationController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter year of formation",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (yearFormationController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter year of formation",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
-    if (yearFormationController.text.length != 4) {
-      ToastHelper.show(context,
-          message: "Enter valid year (e.g. 2020)",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (yearFormationController.text.length != 4) {
+    //   ToastHelper.show(context,
+    //       message: "Enter valid year (e.g. 2020)",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Address
     if (fullAddressController.text.trim().isEmpty) {
@@ -800,44 +855,44 @@ class _AssociationRegistrationScreenState
     }
 
     // President/Secretary
-    if (presidentSecretaryController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter president/secretary name",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (presidentSecretaryController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter president/secretary name",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Org Type
-    if (orgTypeController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please select registration certificate type",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (orgTypeController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please select registration certificate type",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Document Upload
-    if (selectedDocument == null) {
-      ToastHelper.show(context,
-          message: "Please upload registration document",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (selectedDocument == null) {
+    //   ToastHelper.show(context,
+    //       message: "Please upload registration document",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Verified By
-    if (verifiedByApi.isEmpty) {
-      ToastHelper.show(context,
-          message: "Please select verified by date",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (verifiedByApi.isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please select verified by date",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     // Verified At
-    if (verifiedAtApi.isEmpty) {
-      ToastHelper.show(context,
-          message: "Please select verified at date",
-          type: ToastType.warning);
-      return false;
-    }
+    // if (verifiedAtApi.isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please select verified at date",
+    //       type: ToastType.warning);
+    //   return false;
+    // }
 
     return true;
   }

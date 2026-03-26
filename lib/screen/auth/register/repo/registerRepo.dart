@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import '../../../../core/constants/api_constants.dart';
@@ -61,7 +62,8 @@ class RegisterRepo {
         "natureOfOrganization": natureOrganization,
         "panNumber": panNumber,
         "gstNumber": gstNumber,
-        "selectedAssociations": selectAssociation,
+        "selectedAssociations": jsonEncode(selectAssociation),
+        // "selectedAssociations": selectAssociation,
 
         if (profileImage != null)
           "profileImage": await MultipartFile.fromFile(
@@ -69,6 +71,8 @@ class RegisterRepo {
             filename: profileImage.path.split('/').last,
           ),
       });
+
+      debugPrint("selectedAssociations JSON: ${jsonEncode(selectAssociation)}");
       // 👇 BODY PRINT HERE
       debugPrint("========== PATCH BODY ==========");
       for (var field in formData.fields) {
@@ -86,6 +90,21 @@ class RegisterRepo {
 
       return MemberRegisterBasicModel.fromJson(response);
     } on DioException catch (e) {
+      debugPrint("========= API ERROR =========");
+
+      /// 🔴 Status Code
+      debugPrint("Status Code: ${e.response?.statusCode}");
+
+      /// 🔴 Response Data (MOST IMPORTANT)
+      debugPrint("Response Data: ${e.response?.data}");
+
+      /// 🔴 Headers (optional)
+      debugPrint("Headers: ${e.response?.headers}");
+
+      /// 🔴 Error Message
+      debugPrint("Message: ${e.message}");
+
+      debugPrint("================================");
       if (e.error is NoInternetException) {
         showNoInternetScreen(
           context,

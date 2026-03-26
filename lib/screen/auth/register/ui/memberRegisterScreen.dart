@@ -166,6 +166,57 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
     return Scaffold(
       backgroundColor: ColorResource.white,
       appBar: CustomAppBar(title: "Member Registration",showBackButton: true,),
+      bottomNavigationBar: BlocBuilder<RegisterBloc, RegisterState>(
+        builder: (context, state) {
+          return SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
+                  )
+                ],
+              ),
+              child: CommonAppButton(
+                text: "Complete",
+                isLoading: state.isLoading,
+                onPressed: () {
+                  if (!validateFields()) return;
+
+                  context.read<RegisterBloc>().add(
+                    MemberRegistrationSummitedEvent(
+                      context: context,
+                      fullName: nameController.text,
+                      email: emailController.text,
+                      gender: selectedGender ?? "",
+                      state: selectedState ?? "",
+                      language: selectedLanguage ?? "",
+                      parentOrganizationName: parentOrgController.text,
+                      postalAddress: postalAddressController.text,
+                      dateIncorporation: dateIncorporationApi,
+                      contactNumber: phoneController.text,
+                      natureOrganization: natureOrgController.text,
+                      selectAssociation: selectedAssociations,
+                      profileImage: selectedImage,
+                      phoneNumber: widget.phone,
+                      panNumber: panController.text,
+                      organizationEmailId: orgEmailController.text,
+                      gstNumber: gstController.text,
+                      designation: designation.text,
+                      organizationName: orgNameController.text,
+                      organizationType: orgTypeController.text,
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
       body: BlocListener<RegisterBloc, RegisterState>(
         listener: (context, state) async {
           if (state.isSuccess) {
@@ -260,9 +311,9 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500,)),
                   children: [
-                    CommonTextFormField(controller: nameController, hintText: "Full name"),
+                    CommonTextFormField(controller: nameController, hintText: "Full name*"),
                     const SizedBox(height: 16),
-                    titleWidget(title:"Gender" ),
+                    titleWidget(title:"Gender*" ),
 
                     SizedBox(height: 5,),
 
@@ -276,7 +327,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          hint:  Text("Gender",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
+                          hint:  Text("Gender*",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
                           value: selectedGender,
                           items: ["Male", "Female", "Others"]
                               .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -288,15 +339,15 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     const SizedBox(height: 16),
 
 
-                    const SizedBox(height: 16),
+                    // const SizedBox(height: 16),
 
                     CommonTextFormField(
                       controller: emailController,
-                      hintText: "Email ID",
+                      hintText: "Email ID*",
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    titleWidget(title:"State" ),
+                    titleWidget(title:"State*" ),
 
 
                     SizedBox(height: 5,),
@@ -309,7 +360,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          hint:  Text("Select State",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
+                          hint:  Text("Select State*",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
                           value: selectedState,
                           items: indianStates
                               .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -425,7 +476,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     // Select Associations (Checkboxes)
                     Row(
                       children: [
-                        const Text("Select Association", style: TextStyle(    color: Colors.black,
+                        const Text("Select Association*", style: TextStyle(    color: Colors.black,
                           fontSize: 16,
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,)),
@@ -450,7 +501,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                           showSearchBox: true,
                           searchFieldProps: const TextFieldProps(
                             decoration: InputDecoration(
-                              hintText: "Search associations", // 🔍 hint here
+                              hintText: "Search associations*", // 🔍 hint here
                             ),
                           ),
 
@@ -459,7 +510,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                         // ✅ CORRECT PARAMETER NAME
                         dropdownBuilder: (context, selectedItems) {
                           return const Text(
-                            "Select Associations",
+                            "Select Associations*",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -514,52 +565,52 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
 
 
-                    const SizedBox(height: 30),
+                    // const SizedBox(height: 30),
 
                     SizedBox(height: 20),
-
-                    CommonAppButton(
-                      text: "Complete",
-                      isLoading: state.isLoading,
-                      onPressed: () {
-                        if (!validateFields()) return;
-                        context.read<RegisterBloc>().add(
-                          MemberRegistrationSummitedEvent(
-                            context: context,
-                            fullName: nameController.text,
-                            email: emailController.text,
-                            gender: selectedGender ?? "",
-                            state: selectedState ?? "",
-                            language: selectedLanguage ?? "",
-
-
-                            parentOrganizationName: parentOrgController.text,
-                            postalAddress: postalAddressController.text,
-                            dateIncorporation:dateIncorporationApi,
-                            contactNumber: phoneController.text,
-
-                            natureOrganization: natureOrgController.text,
-
-                            selectAssociation: selectedAssociations,
-                            profileImage: selectedImage,
-                            phoneNumber: widget.phone,
-                            panNumber:panController.text,
-                            organizationEmailId: orgEmailController.text,
-                            gstNumber:gstController.text,
-                            designation: designation.text,
-                            organizationName: orgNameController.text,
-                            organizationType: orgTypeController.text,
-
-
-
-
-
-
-
-                          ),
-                        );
-                      },
-                    ),
+                    //
+                    // CommonAppButton(
+                    //   text: "Complete",
+                    //   isLoading: state.isLoading,
+                    //   onPressed: () {
+                    //     if (!validateFields()) return;
+                    //     context.read<RegisterBloc>().add(
+                    //       MemberRegistrationSummitedEvent(
+                    //         context: context,
+                    //         fullName: nameController.text,
+                    //         email: emailController.text,
+                    //         gender: selectedGender ?? "",
+                    //         state: selectedState ?? "",
+                    //         language: selectedLanguage ?? "",
+                    //
+                    //
+                    //         parentOrganizationName: parentOrgController.text,
+                    //         postalAddress: postalAddressController.text,
+                    //         dateIncorporation:dateIncorporationApi,
+                    //         contactNumber: phoneController.text,
+                    //
+                    //         natureOrganization: natureOrgController.text,
+                    //
+                    //         selectAssociation: selectedAssociations,
+                    //         profileImage: selectedImage,
+                    //         phoneNumber: widget.phone,
+                    //         panNumber:panController.text,
+                    //         organizationEmailId: orgEmailController.text,
+                    //         gstNumber:gstController.text,
+                    //         designation: designation.text,
+                    //         organizationName: orgNameController.text,
+                    //         organizationType: orgTypeController.text,
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
 
                   ],
                 ),
@@ -615,6 +666,11 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
 
   bool validateFields() {
+    if (selectedImage == null) {
+      ToastHelper.show(context,
+          message: "Please upload profile image", type: ToastType.warning);
+      return false;
+    }
     // Name
     if (nameController.text.trim().isEmpty) {
       ToastHelper.show(context,
@@ -627,11 +683,8 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
       ToastHelper.show(context,
           message: "Please select gender", type: ToastType.warning);
       return false;
-    }  if (selectedImage == null) {
-      ToastHelper.show(context,
-          message: "Please upload profile image", type: ToastType.warning);
-      return false;
     }
+
 
     // Email
     if (emailController.text.trim().isEmpty) {
@@ -648,75 +701,75 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
     }
 
     // Language
-    if (selectedLanguage == null) {
-      ToastHelper.show(context,
-          message: "Please select preferred language", type: ToastType.warning);
-      return false;
-    }
+    // if (selectedLanguage == null) {
+    //   ToastHelper.show(context,
+    //       message: "Please select preferred language", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Organization Type
-    if (orgTypeController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please select organization type", type: ToastType.warning);
-      return false;
-    }
+    // if (orgTypeController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please select organization type", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Designation
-    if (designation.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter designation", type: ToastType.warning);
-      return false;
-    }
+    // if (designation.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter designation", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Organization Name
-    if (orgNameController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter organization name", type: ToastType.warning);
-      return false;
-    }
+    // if (orgNameController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter organization name", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Address
-    if (postalAddressController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter postal address", type: ToastType.warning);
-      return false;
-    }
+    // if (postalAddressController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter postal address", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Date
-    if (dateIncorporationApi.isEmpty) {
-      ToastHelper.show(context,
-          message: "Please select incorporation date", type: ToastType.warning);
-      return false;
-    }
+    // if (dateIncorporationApi.isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please select incorporation date", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Contact
-    if (orgContactController.text.trim().isEmpty ||
-        orgContactController.text.length < 10) {
-      ToastHelper.show(context,
-          message: "Please enter valid contact number", type: ToastType.warning);
-      return false;
-    }
+    // if (orgContactController.text.trim().isEmpty ||
+    //     orgContactController.text.length < 10) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter valid contact number", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Org Email
-    if (orgEmailController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter organization email", type: ToastType.warning);
-      return false;
-    }
+    // if (orgEmailController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter organization email", type: ToastType.warning);
+    //   return false;
+    // }
 
     // PAN
-    if (panController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter PAN number", type: ToastType.warning);
-      return false;
-    }
+    // if (panController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter PAN number", type: ToastType.warning);
+    //   return false;
+    // }
 
     // GST
-    if (gstController.text.trim().isEmpty) {
-      ToastHelper.show(context,
-          message: "Please enter GST number", type: ToastType.warning);
-      return false;
-    }
+    // if (gstController.text.trim().isEmpty) {
+    //   ToastHelper.show(context,
+    //       message: "Please enter GST number", type: ToastType.warning);
+    //   return false;
+    // }
 
     // Associations
     if (selectedAssociations.isEmpty) {

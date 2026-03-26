@@ -57,6 +57,7 @@ class _MembershipAssignmentScreenState extends State<MembershipAssignmentScreen>
       create: (context) =>
       PostBloc(repo: PostRepo())..add(MembershipAssignmentEvent(context: context)),
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: CustomAppBar(title: "Membership"),
 
         body: BlocConsumer<PostBloc, PostState>(
@@ -79,210 +80,210 @@ class _MembershipAssignmentScreenState extends State<MembershipAssignmentScreen>
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final membership = state.membershipAssignmentModel?.data;
+              final list = state.membershipAssignmentModel?.data ?? [];
 
-              if (membership == null) {
+              if (list.isEmpty) {
                 return const Center(
-                  child: Text(
-                    "No Membership Assigned",
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: Text("No Membership Assigned"),
                 );
               }
 
-              return SingleChildScrollView(
+              return ListView.separated(
                 padding: const EdgeInsets.all(12),
-                child: GestureDetector(
-                  // onTap: (){
-                  //   print("OOOOOOOOOOOOOOOOOO");
-                  //   context.read<PostBloc>().add(
-                  //     CreateOrderEvent(
-                  //       context: context,
-                  //       membershipPlanID: membership.sId!,
-                  //     ),
-                  //   );
-                  // },
-                  onTap: () {
-                      print("OOOOOOOOOOOOOOOOOO");
+                itemCount: list.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final membership = list[index];
 
+                  return GestureDetector(
+                    onTap: () {
+
+                      /// ✅ Create Order
                       context.read<PostBloc>().add(
                         CreateOrderEvent(
                           context: context,
-                          membershipPlanID: state.membershipAssignmentModel!.data!.membershipPlan!.sId??"No DDDD",
+                          membershipPlanID:
+                          membership.membershipPlan?.sId ?? "",
                         ),
-                    );
-                    final membership = context
-                        .read<PostBloc>()
-                        .state
-                        .membershipAssignmentModel
-                        ?.data;
-
-                    if (membership?.membershipPlan?.amount != null) {
-                      _razorpayService.openCheckout(
-                        amount: membership!.membershipPlan!.amount!,
-                        name: "Bharat Metal Grid",
-                        description: membership.membershipPlan!.type ?? "Membership Plan",
-                        email: "test@gmail.com",
-                        contact: "9999999999",
                       );
-                    }
-                  },
-                  //CreateOrderEvent
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    decoration: BoxDecoration(
-                      color: ColorResource.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                        // BoxShadow(
-                        //   color: Colors.black.withOpacity(0.1),
-                        //   blurRadius: 6,
-                        //   spreadRadius: 1,
-                        //   offset: const Offset(0, 3),
-                        // ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
 
-                        /// 🔹 Membership Type
-                        Text(
-                          capitalizeFirst(membership.membershipPlan?.type),
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                      /// ✅ Razorpay Open
+                      if (membership.membershipPlan?.amount != null) {
+                        _razorpayService.openCheckout(
+                          amount: membership.membershipPlan!.amount!.toString(),
+                          name: "Bharat Metal Grid",
+                          description:
+                          membership.membershipPlan!.type ?? "Membership Plan",
+                          email: "test@gmail.com",
+                          contact: "9999999999",
+                        );
+                      }
+                    },
+
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF8FAFC),        // ← Changed: Soft elegant background
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFFE2E8F0),      // ← Changed: Cleaner border
+                          width: 1.2,
+                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x0A000000),           // ← Softer shadow
+                            blurRadius: 8,
+                            offset: Offset(0, 3),
                           ),
-                        ),
+                        ],
+                      ),
 
-                        const SizedBox(height: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
 
-                        /// 🔹 Description
-                        Text(
-                          membership.membershipPlan?.description ?? "No Description",
-                          style: const TextStyle(fontSize: 14),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        /// 🔹 Amount
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Amount",
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                          /// 🔷 Type
+                          Text(
+                            capitalizeFirst(membership.membershipPlan?.type),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            Text(
-                              "₹ ${membership.membershipPlan?.amount ?? "0"}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
 
-                        const Divider(height: 30),
+                          const SizedBox(height: 6),
 
-                        /// 🔹 Expiry
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Expiry (Days)"),
-                            Text(
-                              "${membership.membershipPlan?.expiryInDays ?? 0} Days",
-                            ),
-                          ],
-                        ),
+                          /// 🔷 Description
+                          Text(
+                            membership.membershipPlan?.description ?? "No Description",
+                            style: const TextStyle(fontSize: 13),
+                          ),
 
-                        const Divider(height: 30),
+                          const SizedBox(height: 12),
 
-                        /// 🔹 Payment Status
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Payment Status"),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: membership.paymentStatus == "Paid"
-                                    ? Colors.green.shade100
-                                    : Colors.red.shade100,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                membership.paymentStatus ?? "Unknown",
-                                style: TextStyle(
+                          /// 🔷 Amount
+                          _row(
+                            "Amount",
+                            "₹ ${membership.membershipPlan?.amount ?? 0}",
+                            valueColor: Colors.green,
+                          ),
+
+                          /// 🔷 Expiry
+                          _row(
+                            "Expiry",
+                            "${membership.membershipPlan?.expiryInDays ?? 0} Days",
+                          ),
+
+                          /// 🔷 Payment Status
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Payment Status"),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
                                   color: membership.paymentStatus == "Paid"
-                                      ? Colors.green
-                                      : Colors.red,
-                                  fontWeight: FontWeight.w600,
+                                      ? Colors.green.shade100
+                                      : Colors.red.shade100,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  membership.paymentStatus ?? "Unknown",
+                                  style: TextStyle(
+                                    color: membership.paymentStatus == "Paid"
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          /// 🔷 Assigned By
+                          _row(
+                            "Assigned By",
+                            membership.assignedBy?.email ?? "N/A",
+                          ),
+
+                          const SizedBox(height: 10),
+
+                          /// 🔷 Date
+                          Text(
+                            "Posted on: ${formatDate(membership.createdAt)}",
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey,
                             ),
-                          ],
-                        ),
-
-                        const Divider(height: 30),
-
-                        /// 🔹 Assigned By
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Assigned By"),
-                            Text(
-                              membership.assignedBy?.email ?? "N/A",
-                              style: const TextStyle(fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-                        Text(
-                          "Posted on: ${formatDate(membership.createdAt ?? "")}",
-                          style: const TextStyle(color: Colors.grey,   fontSize: 12),
-                        ),
-
-
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
             }
         ),
       ),
     );
   }
-  void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    print("Payment Success: ${response.paymentId}");
-
-    context.read<PostBloc>().add(
-      CreateOrderEvent(
-        context: context,
-        membershipPlanID:
-        context.read<PostBloc>().state.membershipAssignmentModel!.data!.sId!,
+  Widget _row(String title, String value, {Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: valueColor ?? Colors.black,
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+
+    final list = context.read<PostBloc>()
+        .state
+        .membershipAssignmentModel
+        ?.data;
+
+    if (list != null && list.isNotEmpty) {
+      context.read<PostBloc>().add(
+        CreateOrderEvent(
+          context: context,
+          membershipPlanID:
+          list.first.membershipPlan?.sId ?? "",
+        ),
+      );
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Payment Successful")),
     );
   }
+  // void _handlePaymentSuccess(PaymentSuccessResponse response) {
+  //   print("Payment Success: ${response.paymentId}");
+  //
+  //   context.read<PostBloc>().add(
+  //     CreateOrderEvent(
+  //       context: context,
+  //       membershipPlanID:
+  //       context.read<PostBloc>().state.membershipAssignmentModel!.data!.sId!,
+  //     ),
+  //   );
+  //
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text("Payment Successful")),
+  //   );
+  // }
 
   void _handlePaymentError(PaymentFailureResponse response) {
     print("Payment Failed: ${response.message}");

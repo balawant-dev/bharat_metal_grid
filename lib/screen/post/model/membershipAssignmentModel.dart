@@ -1,32 +1,38 @@
 class MembershipAssignmentModel {
-  bool? success;
-  Data? data;
+  var success;
+  List<Data>? data;
 
   MembershipAssignmentModel({this.success, this.data});
 
   MembershipAssignmentModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     if (this.data != null) {
-      data['data'] = this.data!.toJson();
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Data {
-  String? sId;
+  var sId;
   AssignedBy? assignedBy;
-  String? association;
+  var association;
   MembershipPlan? membershipPlan;
-  String? paymentStatus;
-  String? createdAt;
-  int? iV;
+  var paymentStatus;
+  var assigned;
+  var createdAt;
+  var iV;
 
   Data(
       {this.sId,
@@ -34,6 +40,7 @@ class Data {
         this.association,
         this.membershipPlan,
         this.paymentStatus,
+        this.assigned,
         this.createdAt,
         this.iV});
 
@@ -47,6 +54,7 @@ class Data {
         ? new MembershipPlan.fromJson(json['membershipPlan'])
         : null;
     paymentStatus = json['paymentStatus'];
+    assigned = json['assigned'];
     createdAt = json['createdAt'];
     iV = json['__v'];
   }
@@ -62,6 +70,7 @@ class Data {
       data['membershipPlan'] = this.membershipPlan!.toJson();
     }
     data['paymentStatus'] = this.paymentStatus;
+    data['assigned'] = this.assigned;
     data['createdAt'] = this.createdAt;
     data['__v'] = this.iV;
     return data;
@@ -69,8 +78,8 @@ class Data {
 }
 
 class AssignedBy {
-  String? sId;
-  String? email;
+  var sId;
+  var email;
 
   AssignedBy({this.sId, this.email});
 
@@ -88,13 +97,13 @@ class AssignedBy {
 }
 
 class MembershipPlan {
-  String? sId;
-  String? type;
-  String? amount;
-  int? expiryInDays;
-  String? description;
-  String? createdAt;
-  int? iV;
+  var sId;
+  var type;
+  var amount;
+  var expiryInDays;
+  var description;
+  var createdAt;
+  var iV;
 
   MembershipPlan(
       {this.sId,
