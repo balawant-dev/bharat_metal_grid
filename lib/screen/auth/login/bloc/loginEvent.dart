@@ -21,3 +21,10 @@ class SendOtpEvent extends SignInEvent {
 class ResetSendOtpEvent extends SignInEvent {
   const ResetSendOtpEvent();
 }
+class ClearMessageEvent extends SignInEvent {}
+class ShowMessageEvent extends SignInEvent {
+  final String message;
+  final Color color;
+
+  ShowMessageEvent({required this.message, required this.color});
+}

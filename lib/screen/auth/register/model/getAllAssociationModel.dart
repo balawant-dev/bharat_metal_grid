@@ -30,6 +30,8 @@ class GetAllAssociationModel {
 class Data {
   String? sId;
   String? associationName;
+  String? city;
+  String? state;
   String? presidentOrSecretary;
   String? phoneNumber;
   String? email;
@@ -38,6 +40,8 @@ class Data {
   Data(
       {this.sId,
         this.associationName,
+        this.city,
+        this.state,
         this.presidentOrSecretary,
         this.phoneNumber,
         this.email,
@@ -46,6 +50,8 @@ class Data {
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     associationName = json['associationName'];
+    state = json['state'];
+    city = json['city'];
     presidentOrSecretary = json['presidentOrSecretary'];
     phoneNumber = json['phoneNumber'];
     email = json['email'];
@@ -56,6 +62,8 @@ class Data {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.sId;
     data['associationName'] = this.associationName;
+    data['state'] = this.state;
+    data['city'] = this.city;
     data['presidentOrSecretary'] = this.presidentOrSecretary;
     data['phoneNumber'] = this.phoneNumber;
     data['email'] = this.email;

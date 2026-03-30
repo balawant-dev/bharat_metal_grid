@@ -71,6 +71,8 @@ class CMSHtmlScreen extends StatelessWidget {
 
   const CMSHtmlScreen({
     super.key,
+
+
     required this.type,
     required this.title,
   });

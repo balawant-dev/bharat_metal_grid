@@ -398,6 +398,31 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                                     ],
                                   ),
                                 ),
+                                GestureDetector(
+                                  onTap: () {
+                                    // if (user.email != null) {
+                                    //   _sendEmail(user.email!);
+                                    // }
+                                  },
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.location_on_sharp,
+                                          size: 16, color: Colors.black),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          user.state ?? "Not Available",
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            // decoration:
+                                            // TextDecoration.underline,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),

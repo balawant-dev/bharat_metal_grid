@@ -30,7 +30,8 @@ class _PostLeaderShipScreenState
     "President",
     "Vice-President",
     "Secretary",
-    "Treasurer"
+    "Treasurer",
+    "Other"
   ];
 
   Future<void> pickImage() async {

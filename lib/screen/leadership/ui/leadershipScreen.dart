@@ -79,6 +79,9 @@ class _LeadershipScreenState extends State<LeadershipScreen> {
     final treasurer = employees
         .where((e) => e.designation == "Treasurer")
         .toList();
+    final other = employees
+        .where((e) => e.designation == "Other")
+        .toList();
 
     return SingleChildScrollView(
       child: Column(

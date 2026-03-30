@@ -57,36 +57,36 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<SignInBloc, SignInState>(
         listener: (context, state) {
 
-          if (state.successMessage != null) {
-            ToastHelper.show(
-              context,
-              message: state.successMessage!,
-              type: ToastType.success,
-            );
-          }
-
-          if (state.errorMessage != null) {
-            ToastHelper.show(
-              context,
-              message: state.errorMessage!,
-              type: ToastType.error,
-            );
-          }
-
-          if (state.warningMessage != null) {
-            ToastHelper.show(
-              context,
-              message: state.warningMessage!,
-              type: ToastType.warning,
-            );
-          }
+          // if (state.successMessage != null) {
+          //   ToastHelper.show(
+          //     context,
+          //     message: state.successMessage!,
+          //     type: ToastType.success,
+          //   );
+          // }
+          //
+          // if (state.errorMessage != null) {
+          //   ToastHelper.show(
+          //     context,
+          //     message: state.errorMessage!,
+          //     type: ToastType.error,
+          //   );
+          // }
+          //
+          // if (state.warningMessage != null) {
+          //   ToastHelper.show(
+          //     context,
+          //     message: state.warningMessage!,
+          //     type: ToastType.warning,
+          //   );
+          // }
 
           if (state.isSuccess) {
             Nav.push(context, Routes.otp, extra: mobileController.text);
           }
 
           // Reset after showing
-          context.read<SignInBloc>().emit(SignInState());
+          // context.read<SignInBloc>().emit(SignInState());
         },
         child: BlocBuilder<SignInBloc, SignInState>(
           builder: (context, state) {
@@ -212,12 +212,37 @@ class _LoginScreenState extends State<LoginScreen> {
                               onChanged: (phone) {
                                 phoneNumber = phone.number;
                                 countryCode = phone.countryCode;
+
+                                final bloc = context.read<SignInBloc>();
+
+                                if (phone.number.length == 10) {
+                                  bloc.add(ClearMessageEvent()); // auto clear
+                                }
                               },
+                              // onChanged: (phone) {
+                              //   phoneNumber = phone.number;
+                              //   countryCode = phone.countryCode;
+                              // },
                             ),
                           ),
 
                           // OTP Field
-                          const SizedBox(height: 25),
+                          const SizedBox(height: 15),
+                          if (state.displayMessage != null)
+                            AnimatedSwitcher(
+                              duration: Duration(milliseconds: 300),
+                              child: state.displayMessage != null
+                                  ? Text(
+                                state.displayMessage!,
+                                key: ValueKey(state.displayMessage),
+                                style: TextStyle(
+                                  color: state.messageColor ?? Colors.red,
+                                  fontSize: 14,
+                                ),
+                              )
+                                  : SizedBox(),
+                            ),
+                          const SizedBox(height: 15),
                           CommonAppButton(
                             text: "Send OTP",
                             isLoading: state.isLoading,
@@ -225,29 +250,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 state.isLoading
                                     ? null
                                     : () {
-                              // if(mobileController.text.isEmpty||mobileController.text.length!=10){
-                              //   ToastHelper.show(
-                              //     context,
-                              //     message:
-                              //     "Please Enter 10 Digit Mobile Number",
-                              //     type: ToastType.warning,
-                              //   );
-                              // }
-                                      if (!_agreedToTerms) {
-                                        //
-                                        ToastHelper.show(
-                                          context,
-                                          message:
-                                              "Please accept Terms & Conditions",
-                                          type: ToastType.warning,
-                                        );
-                                        // ScaffoldMessenger.of(context).showSnackBar(
-                                        //   const SnackBar(
-                                        //     content: Text("Please accept Terms & Conditions"),
-                                        //   ),
-                                        // );
-                                        return;
-                                      }
+
+                                  if (!_agreedToTerms) {
+                                    context.read<SignInBloc>().add(
+                                      ShowMessageEvent(
+                                        message: "Please accept Terms & Conditions",
+                                        color: Colors.orange,
+                                      ),
+                                    );
+                                    return;
+                                  }
 
                                       bloc.add(
                                         SendOtpEvent(
@@ -257,18 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       );
                                     },
-                            // onPressed:
-                            //     state.isLoading
-                            //         ? null
-                            //         : () {
-                            //           bloc.add(
-                            //             SendOtpEvent(
-                            //               mobileNumber:
-                            //                   mobileController.text.trim(),
-                            //               context: context,
-                            //             ),
-                            //           );
-                            //         },
+
                           ),
 
                           const SizedBox(height: 20),
@@ -406,6 +407,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                       setState(() {
                                         _agreedToTerms = !_agreedToTerms;
                                       });
+
+                                      // ✅ Clear message when user accepts terms
+                                      if (_agreedToTerms) {
+                                        context.read<SignInBloc>().add(ClearMessageEvent());
+                                      }
                                     },
 
                                     child: Container(
