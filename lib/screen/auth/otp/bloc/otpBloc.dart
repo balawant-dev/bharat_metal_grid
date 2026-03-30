@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../app/router/navigation/nav.dart';
@@ -22,6 +23,17 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
       emit(OTPState()); // pura state reset
     });
     on<VerifyOtpEvent>(_onSendOTPSubmitted);
+
+    on<ClearOtpMessageEvent>((event, emit) {
+      emit(state.copyWith(displayMessage: null));
+    });
+
+    on<ShowOtpMessageEvent>((event, emit) {
+      emit(state.copyWith(
+        displayMessage: event.message,
+        messageColor: event.color,
+      ));
+    });
   }
 
   Future<void> _onSendOTPSubmitted(
@@ -32,13 +44,16 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
     if (event.otp.isEmpty || event.otp.length != 4) {
       emit(state.copyWith(
         isLoading: false,
-        warningMessage: "Enter valid 4 digit OTP",
+        displayMessage: "Enter valid 4 digit OTP",
+        messageColor: Colors.orange,
       ));
       return;
     }
 
-
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(
+      isLoading: true,
+      displayMessage: null, // ✅ clear old message
+    ));
 
     try {
       final response = await authRepo.verifyOtp(
@@ -52,7 +67,8 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
         emit(state.copyWith(
           isLoading: false,
           isSuccess: true,
-          successMessage: "OTP verified successfully",
+          displayMessage: "OTP verified successfully",
+          messageColor: Colors.green,
         ));
         print("✅ Store2");
 
@@ -113,7 +129,7 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
         // await AppSettings.setUserType(isAgent: isAgent, isUser: isUser,userID: userID??""); // ya jo bhi value ho
         emit(
           state.copyWith(
-            errorMessage: "Verify OTP Successfully",
+            displayMessage: "Verify OTP Successfully",
             isLoading: false,
             isSuccess: true,
 
@@ -125,11 +141,17 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
         emit(state.copyWith(
           isLoading: false,
           hasError: true,
-          errorMessage: "Invalid OTP",
+          displayMessage: "Invalid OTP",
+          messageColor: Colors.red,
         ));
       }
     } catch (e) {
-      emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
+      emit(state.copyWith(
+        isLoading: false,
+        displayMessage: "Invalid OTP",
+        messageColor: Colors.red,
+      ));
+   //   emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }
   }
 }

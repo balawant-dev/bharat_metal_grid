@@ -23,3 +23,12 @@ class VerifyOtpEvent extends OTPEvent {
 class ResetVerifyOtpEvent extends OTPEvent {
   const ResetVerifyOtpEvent();
 }
+class ClearOtpMessageEvent extends OTPEvent {}
+
+
+class ShowOtpMessageEvent extends OTPEvent {
+  final String message;
+  final Color color;
+
+  ShowOtpMessageEvent({required this.message, required this.color});
+}

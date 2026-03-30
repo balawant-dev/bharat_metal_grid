@@ -84,36 +84,29 @@ class _OtpScreenState extends State<OtpScreen> {
       body: BlocListener<OTPBloc, OTPState>(
           listener: (context, state) {
 
-            if (state.successMessage != null) {
-              ToastHelper.show(
-                context,
-                message: state.successMessage!,
-                type: ToastType.success,
-              );
-            }
-
-            // if (state.errorMessage != null) {
+            // if (state.successMessage != null) {
             //   ToastHelper.show(
             //     context,
-            //     message: state.errorMessage!,
-            //     type: ToastType.error,
+            //     message: state.successMessage!,
+            //     type: ToastType.success,
             //   );
             // }
-
-            if (state.warningMessage != null) {
-              ToastHelper.show(
-                context,
-                message: state.warningMessage!,
-                type: ToastType.warning,
-              );
-            }
+            //
+            //
+            // if (state.warningMessage != null) {
+            //   ToastHelper.show(
+            //     context,
+            //     message: state.warningMessage!,
+            //     type: ToastType.warning,
+            //   );
+            // }
 
             if (state.isSuccess) {
               // Navigation already bloc me hai
             }
 
             // ❗ IMPORTANT
-            context.read<OTPBloc>().add(const ResetVerifyOtpEvent());
+            // context.read<OTPBloc>().add(const ResetVerifyOtpEvent());
           },
         child: BlocBuilder<OTPBloc, OTPState>(
           builder: (context, state) {
@@ -194,69 +187,88 @@ class _OtpScreenState extends State<OtpScreen> {
                                 ],
                               ),
                           const SizedBox(height: 25),
-                              Pinput(
-                                controller: otpController,
-                                length: 4,
-                                defaultPinTheme: PinTheme(
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  textStyle: const TextStyle(
-                                    fontSize: 20,
+                          Pinput(
+                            controller: otpController,
+                            length: 4,
+                            defaultPinTheme: PinTheme(
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+
+                            onChanged: (value) {
+                              if (context.read<OTPBloc>().state.displayMessage != null) {
+                                context.read<OTPBloc>().add(ClearOtpMessageEvent());
+                              }
+                            },
+
+                            onCompleted: (value) {
+                              context.read<OTPBloc>().add(
+                                VerifyOtpEvent(
+                                  mobileNumber: widget.phone,
+                                  otp: value.trim(),
+                                  context: context,
+                                ),
+                              );
+                            },
+                          ),
+
+                              const SizedBox(height: 20),
+                          if (state.displayMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: AnimatedSwitcher(
+                                duration: Duration(milliseconds: 300),
+                                child: Text(
+                                  state.displayMessage!,
+                                  key: ValueKey(state.displayMessage),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: state.messageColor ?? Colors.red,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                onCompleted: (value)async {
-                                  // SharedPreferences pref = await SharedPreferences.getInstance();
-                                  // String? fcmToken = pref.getString("fcmToken");
-                                  // context.read<OTPBloc>().add(
-                                  //   VerifyOtpEvent(
-                                  //     mobileNumber: widget.phone,
-                                  //     otp: value.trim(), // ✅ CORRECT
-                                  //     context: context,
-                                  //       deviceToken:fcmToken!
-                                  //   ),
-                                  // );
-
-                                  ///Nav.go(context,  Routes.rideSelect);
-
-                                  // Navigator.pushReplacement(
-                                  //   context,
-                                  //   MaterialPageRoute(builder: (_) => const RideTypeScreen()),
-                                  // );
-                                },
                               ),
-
-                              const SizedBox(height: 20),
+                            ),
+                          if (state.isLoading)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: CircularProgressIndicator(),
+                            ),
                           // White Card Section
 
                           // OTP Field
                           const SizedBox(height: 25),
-
-                          CommonAppButton(
-                          text:  "Verify OTP",
-                          isLoading: state.isLoading,
-                          onPressed:
-                          state.isLoading
-                          ? null
-                              : ()async {
-                            // SharedPreferences pref = await SharedPreferences.getInstance();
-                            // String? fcmToken = pref.getString("fcmToken");
-                            context.read<OTPBloc>().add(
-                              VerifyOtpEvent(
-                                  mobileNumber: widget.phone,
-                                  otp: otpController.text, // ✅ CORRECT
-                                  context: context,
-
-                              ),
-                            );
-
-                          },
-                          ),
-                          const SizedBox(height: 15),
+                          //
+                          // CommonAppButton(
+                          // text:  "Verify OTP",
+                          // isLoading: state.isLoading,
+                          // onPressed:
+                          // state.isLoading
+                          // ? null
+                          //     : ()async {
+                          //   // SharedPreferences pref = await SharedPreferences.getInstance();
+                          //   // String? fcmToken = pref.getString("fcmToken");
+                          //   context.read<OTPBloc>().add(
+                          //     VerifyOtpEvent(
+                          //         mobileNumber: widget.phone,
+                          //         otp: otpController.text, // ✅ CORRECT
+                          //         context: context,
+                          //
+                          //     ),
+                          //   );
+                          //
+                          // },
+                          // ),
+                          // const SizedBox(height: 15),
 
 
 
