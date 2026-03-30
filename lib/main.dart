@@ -3,6 +3,7 @@ import 'package:bharat_metal_grid/screen/auth/otp/bloc/otpBloc.dart';
 import 'package:bharat_metal_grid/screen/auth/register/bloc/registerBloc.dart';
 import 'package:bharat_metal_grid/screen/auth/role/bloc/roleBloc.dart';
 import 'package:bharat_metal_grid/screen/cms/bloc/cmsBloc.dart';
+import 'package:bharat_metal_grid/screen/complaintSupport/bloc/complaint_bloc.dart';
 import 'package:bharat_metal_grid/screen/events/bloc/eventsBloc.dart';
 
 import 'package:bharat_metal_grid/screen/gridAI/bloc/gemini_bloc.dart';
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
     BlocProvider<LeaderShipBloc>(create: (context) => LeaderShipBloc()),
     BlocProvider<EventsBloc>(create: (context) => EventsBloc()),
     BlocProvider<CMSBloc>(create: (context) => CMSBloc()),
+    BlocProvider<ComplaintBloc>(create: (context) => ComplaintBloc()),
     BlocProvider<PostBloc>(create: (context) => PostBloc(repo: PostRepo())),
 
 

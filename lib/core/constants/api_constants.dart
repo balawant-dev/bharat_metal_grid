@@ -34,6 +34,7 @@ static const String industryNews = 'api/user/industry-news';
 static const String gallery = 'api/user/gallery';
 static const String banners = 'api/user/banners';
 static const String info = 'api/user/info';
+static const String complaintSupport = 'api/user/complaint-support';
 static const String events = 'api/user/events';
 static const String latestNotices = 'api/user/latest-notices';
 
