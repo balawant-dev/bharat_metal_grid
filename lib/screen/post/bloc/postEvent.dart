@@ -46,7 +46,9 @@ class FetchPostDetailEvent extends PostEvent {
   @override
   List<Object?> get props => [context, id];
 }
-
+class ClearPostMessageEvent extends PostEvent {
+  const ClearPostMessageEvent();
+}
 class CreatePostEvent extends PostEvent {
   final BuildContext context;
   final String title;

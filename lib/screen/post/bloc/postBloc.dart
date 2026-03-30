@@ -1,5 +1,6 @@
 import 'package:bharat_metal_grid/screen/post/bloc/postEvent.dart';
 import 'package:bharat_metal_grid/screen/post/bloc/postState.dart';
+import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +21,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<ReactToPostEvent>(_onReactToPost);
     on<MembershipAssignmentEvent>(_onFetchMembershipAssignment);
     on<CreateOrderEvent>(_onCreateOrder);
+    on<ClearPostMessageEvent>((event, emit) {
+      emit(state.copyWith(displayMessage: null));
+    });
   }
 
   Future<void> _onCreateOrder(
@@ -155,12 +159,36 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       ));
     }
   }
-
   Future<void> _onCreatePost(
       CreatePostEvent event,
       Emitter<PostState> emit,
       ) async {
-    emit(state.copyWith(isCreating: true, createError: null, createSuccess: false));
+
+    if (event.title.trim().isEmpty) {
+      emit(state.copyWith(
+        displayMessage: "Please enter post title",
+        messageColor: Colors.orange,
+      ));
+      return;
+    }
+
+    if (event.description.trim().isEmpty) {
+      emit(state.copyWith(
+        displayMessage: "Please enter description",
+        messageColor: Colors.orange,
+      ));
+      return;
+    }
+
+    if (event.imageFile == null) {
+      emit(state.copyWith(
+        displayMessage: "Please select an image",
+        messageColor: Colors.orange,
+      ));
+      return;
+    }
+
+    emit(state.copyWith(isCreating: true, displayMessage: null));
 
     try {
       final response = await _repo.createPost(
@@ -171,27 +199,65 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       );
 
       if (response.success == true) {
-        print("Sab Kuchh done hai 🤦‍♀️🤦‍♀️🤦‍♀️🤦‍♀️");
         emit(state.copyWith(
           isCreating: false,
           createSuccess: true,
-          createMessage: "Post created successfully",
+          displayMessage: "Post created successfully",
+          messageColor: Colors.green,
         ));
-        // Auto refresh list
+
         add(FetchPostsEvent(context: event.context));
       } else {
         emit(state.copyWith(
           isCreating: false,
-          createError: "Failed to create post",
+          displayMessage: "Failed to create post",
+          messageColor: Colors.red,
         ));
       }
     } catch (e) {
       emit(state.copyWith(
         isCreating: false,
-        createError: e.toString(),
+        displayMessage: e.toString(),
+        messageColor: Colors.red,
       ));
     }
   }
+  // Future<void> _onCreatePost(
+  //     CreatePostEvent event,
+  //     Emitter<PostState> emit,
+  //     ) async {
+  //   emit(state.copyWith(isCreating: true, createError: null, createSuccess: false));
+  //
+  //   try {
+  //     final response = await _repo.createPost(
+  //       context: event.context,
+  //       title: event.title,
+  //       description: event.description,
+  //       profileImage: event.imageFile!,
+  //     );
+  //
+  //     if (response.success == true) {
+  //       print("Sab Kuchh done hai 🤦‍♀️🤦‍♀️🤦‍♀️🤦‍♀️");
+  //       emit(state.copyWith(
+  //         isCreating: false,
+  //         createSuccess: true,
+  //         createMessage: "Post created successfully",
+  //       ));
+  //       // Auto refresh list
+  //       add(FetchPostsEvent(context: event.context));
+  //     } else {
+  //       emit(state.copyWith(
+  //         isCreating: false,
+  //         createError: "Failed to create post",
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     emit(state.copyWith(
+  //       isCreating: false,
+  //       createError: e.toString(),
+  //     ));
+  //   }
+  // }
 
   Future<void> _onReactToPost(
       ReactToPostEvent event,

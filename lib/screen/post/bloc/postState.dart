@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:equatable/equatable.dart';
 import '../model/createOrderModel.dart';
 import '../model/getPostModel.dart';
@@ -12,7 +14,8 @@ class PostState extends Equatable {
   final String? createMessage;
   final String? createError;
   final String? errorMessage;
-
+  final String? displayMessage;
+  final Color? messageColor;
   final GetPostModel? getPostModel;
   final PostDetailModel? postDetailModel;
   final MembershipAssignmentModel? membershipAssignmentModel;
@@ -26,6 +29,8 @@ class PostState extends Equatable {
     this.createMessage,
     this.createError,
     this.errorMessage,
+    this.displayMessage,
+    this.messageColor,
     this.getPostModel,
     this.postDetailModel,
     this.membershipAssignmentModel,
@@ -39,6 +44,8 @@ class PostState extends Equatable {
     bool? createSuccess,
     String? createMessage,
     String? createError,
+    String? displayMessage,
+    Color? messageColor,
     String? errorMessage,
     GetPostModel? getPostModel,
     MembershipAssignmentModel? membershipAssignmentModel,
@@ -57,6 +64,8 @@ class PostState extends Equatable {
       postDetailModel: postDetailModel ?? this.postDetailModel,
       membershipAssignmentModel: membershipAssignmentModel ?? this.membershipAssignmentModel,
       createOrderModel: createOrderModel ?? this.createOrderModel,
+      displayMessage: displayMessage,
+      messageColor: messageColor,
     );
   }
 

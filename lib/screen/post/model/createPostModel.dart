@@ -1,74 +1,74 @@
 class CreatePostModel {
-  var success;
-  var totalResult;
-  var totalPage;
-  List<Data>? data;
+  bool? success;
+  String? message;
+  Data? data;
 
-  CreatePostModel({this.success, this.totalResult, this.totalPage, this.data});
+  CreatePostModel({this.success, this.message, this.data});
 
   CreatePostModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    totalResult = json['totalResult'];
-    totalPage = json['totalPage'];
-    if (json['data'] != null) {
-      data = <Data>[];
-      json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
-      });
-    }
+    message = json['message'];
+    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
-    data['totalResult'] = this.totalResult;
-    data['totalPage'] = this.totalPage;
+    data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
 }
 
 class Data {
-  var sId;
-  var title;
+  String? title;
   List<String>? image;
-  var description;
-  var like;
-  var dislike;
-  var createdAt;
-  var iV;
+  String? description;
+  int? like;
+  int? dislike;
+  String? postedBy;
+  String? userType;
+  String? sId;
+  String? createdAt;
+  int? iV;
 
   Data(
-      {this.sId,
-        this.title,
+      {this.title,
         this.image,
         this.description,
         this.like,
         this.dislike,
+        this.postedBy,
+        this.userType,
+        this.sId,
         this.createdAt,
         this.iV});
 
   Data.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
     title = json['title'];
     image = json['image'].cast<String>();
     description = json['description'];
     like = json['like'];
     dislike = json['dislike'];
+    postedBy = json['postedBy'];
+    userType = json['userType'];
+    sId = json['_id'];
     createdAt = json['createdAt'];
     iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
     data['title'] = this.title;
     data['image'] = this.image;
     data['description'] = this.description;
     data['like'] = this.like;
     data['dislike'] = this.dislike;
+    data['postedBy'] = this.postedBy;
+    data['userType'] = this.userType;
+    data['_id'] = this.sId;
     data['createdAt'] = this.createdAt;
     data['__v'] = this.iV;
     return data;

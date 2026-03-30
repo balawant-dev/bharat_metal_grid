@@ -25,7 +25,8 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
     return BlocConsumer<PostBloc, PostState>(
       listener: (context, state) {
         if (state.createSuccess) {
-          Navigator.pop(context);
+          context.pop();
+          // Navigator.pop(context);
           _clearFields();
         }
       },
@@ -45,12 +46,18 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
               const SizedBox(height: 16),
               TextField(
                 controller: _titleController,
+                onChanged: (_) {
+                  context.read<PostBloc>().add(ClearPostMessageEvent());
+                },
                 decoration: const InputDecoration(labelText: "Title", border: OutlineInputBorder()),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: _descController,
                 maxLines: 4,
+                onChanged: (_) {
+                  context.read<PostBloc>().add(ClearPostMessageEvent());
+                },
                 decoration: const InputDecoration(labelText: "Description", border: OutlineInputBorder()),
               ),
               const SizedBox(height: 16),
@@ -61,11 +68,33 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                 onPressed: () async {
                   final picker = ImagePicker();
                   final picked = await picker.pickImage(source: ImageSource.gallery);
-                  if (picked != null) setState(() => _selectedImage = File(picked.path));
+                  if (picked != null) {
+                    setState(() => _selectedImage = File(picked.path));
+                    context.read<PostBloc>().add(ClearPostMessageEvent());
+                  }
+                  // if (picked != null) setState(() => _selectedImage = File(picked.path));
                 },
                 icon: const Icon(Icons.image),
                 label: const Text("Pick Image"),
               ),
+              const SizedBox(height: 16),
+              if (state.displayMessage != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 300),
+                    child: Text(
+                      state.displayMessage!,
+                      key: ValueKey(state.displayMessage),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: state.messageColor ?? Colors.red,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: state.isCreating
@@ -79,7 +108,7 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                       imageFile: _selectedImage,
                     ),
                   );
-                  context.pop();
+                  // context.pop();
                 },
                 child: state.isCreating
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
