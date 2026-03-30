@@ -76,6 +76,7 @@ dependencies:
 #  awesome_notifications: ^0.10.1
   rxdart: ^0.28.0
   motion_toast: ^2.15.0
+  image_cropper: ^12.1.1
 #  firebase_core: ^4.2.1
   #  awesome_notifications: ^0.10.1
 #  firebase_messaging: ^16.0.4

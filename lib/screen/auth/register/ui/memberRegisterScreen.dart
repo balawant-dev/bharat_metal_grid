@@ -17,6 +17,7 @@ import '../../../../widget/customAppbar.dart';
 import '../../../../widget/customTextField.dart';
 
 
+import '../../../../widget/custom_image_picker.dart';
 import '../../../../widget/motionToastHelper.dart';
 import '../bloc/registerBloc.dart';
 import '../bloc/registerEvent.dart';
@@ -268,29 +269,36 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
               child: Column(
 
                 children: [
-                GestureDetector(
-                onTap: showImagePicker,
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: ColorResource.white,
-                      radius: 50,
-                      backgroundImage: selectedImage != null
-                          ? FileImage(selectedImage!)
-                          : const AssetImage("assets/images/appLogo.png") as ImageProvider,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 14,
-                        backgroundColor: ColorResource.primaryColor,
-                        child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  CustomImagePicker(
+                    ratioX: 1,
+                    ratioY: 1,
+                    onImageSelected: (file) {
+                      selectedImage = file;
+                    },
+                  ),
+              //   GestureDetector(
+              //   onTap: showImagePicker,
+              //   child: Stack(
+              //     children: [
+              //       CircleAvatar(
+              //         backgroundColor: ColorResource.white,
+              //         radius: 50,
+              //         backgroundImage: selectedImage != null
+              //             ? FileImage(selectedImage!)
+              //             : const AssetImage("assets/images/appLogo.png") as ImageProvider,
+              //       ),
+              //       Positioned(
+              //         bottom: 0,
+              //         right: 0,
+              //         child: CircleAvatar(
+              //           radius: 14,
+              //           backgroundColor: ColorResource.primaryColor,
+              //           child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 15),
 
 
