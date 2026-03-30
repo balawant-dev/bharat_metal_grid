@@ -291,7 +291,18 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
+
+
+                  Text(
+                    "(*) Indicates Mandatory Fields",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+              const SizedBox(height: 20),
 
               // Basic Details Section
                   decorationContainer(
@@ -311,9 +322,10 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500,)),
                   children: [
-                    CommonTextFormField(controller: nameController, hintText: "Full name*"),
+                    titleWidget(title: "Full Name", isRequired: true),
+                    CommonTextFormField(controller: nameController, hintText: "Full name"),
                     const SizedBox(height: 16),
-                    titleWidget(title:"Gender*" ),
+                    titleWidget(title: "Gender", isRequired: true),
 
                     SizedBox(height: 5,),
 
@@ -327,7 +339,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          hint:  Text("Gender*",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
+                          hint:  Text("Gender",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
                           value: selectedGender,
                           items: ["Male", "Female", "Others"]
                               .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -340,14 +352,14 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
 
                     // const SizedBox(height: 16),
-
+                    titleWidget(title:"Email ID*", isRequired: true),
                     CommonTextFormField(
                       controller: emailController,
-                      hintText: "Email ID*",
+                      hintText: "Email ID",
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
-                    titleWidget(title:"State*" ),
+                    titleWidget(title: "State", isRequired: true),
 
 
                     SizedBox(height: 5,),
@@ -655,12 +667,35 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
 // List of Indian states (you can expand this)
   final List<String> indianStates = [
-    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
-    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
-    "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
-    "Uttar Pradesh", "Uttarakhand", "West Bengal", "Delhi"
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Delhi",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
   ];
 
 
@@ -780,10 +815,28 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
     return true;
   }
-  Widget titleWidget({required String title}){
-    return    Row(
+  Widget titleWidget({required String title, bool isRequired = false}) {
+    return Row(
       children: [
-        Text(title,style: TextStyle(fontSize: 12,color: Colors.black),),
+        RichText(
+          text: TextSpan(
+            text: title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black,
+            ),
+            children: [
+              if (isRequired)
+                const TextSpan(
+                  text: " *",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }

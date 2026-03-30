@@ -342,8 +342,17 @@ class _AssociationRegistrationScreenState
                         ),
                       ],
                     ),
+                  ),  const SizedBox(height: 15),
+
+                  Text(
+                    "(*) Indicates Mandatory Fields",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
 
                   // Basic Details Section
                   decorationContainer(
@@ -368,30 +377,33 @@ class _AssociationRegistrationScreenState
                         ),
                       ),
                       children: [
+                        titleWidget(title: "Association Name",isRequired: true),
                         CommonTextFormField(
                           controller: associationNameController,
-                          hintText: "Association Name*",
+                          hintText: "Association Name",
                         ),
                         const SizedBox(height: 16),
+                        titleWidget(title: "Email ID",isRequired: true),
                         CommonTextFormField(
                           controller: emailController,
-                          hintText: "Email ID*",
+                          hintText: "Email ID",
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 16),
-
+                        titleWidget(title: "Full Address",isRequired: true),
 
                         CommonTextFormField(
                           controller: fullAddressController,
-                          hintText: "Full Address*",
+                          hintText: "Full Address",
                           keyboardType: TextInputType.text,
                         ),
                         const SizedBox(height: 16),
+                        titleWidget(title: "City",isRequired: true),
                         CommonTextFormField(
                           controller: cityController,
-                          hintText: "City*",
+                          hintText: "City",
                           keyboardType: TextInputType.text,
-                        ), const SizedBox(height: 16),titleWidget(title: "State"),
+                        ), const SizedBox(height: 16),titleWidget(title: "State",isRequired: true),SizedBox(height: 5),
 
                         // State Dropdown
                         Container(
@@ -407,7 +419,7 @@ class _AssociationRegistrationScreenState
                             child: DropdownButton<String>(
                               isExpanded: true,
                               hint: Text(
-                                "Select State*",
+                                "Select State",
                                 style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 13,
@@ -437,11 +449,11 @@ class _AssociationRegistrationScreenState
                           ),
                         ),
                         const SizedBox(height: 16),
-
+                      titleWidget(title: "Pin Code*",isRequired: true),
 
                         CommonTextFormField(
                           controller: pinController,
-                          hintText: "Pin Code*",
+                          hintText: "Pin Code",
                           maxLength: 6,
                           keyboardType: TextInputType.number,
                         ),
@@ -896,16 +908,28 @@ class _AssociationRegistrationScreenState
 
     return true;
   }
-  Widget titleWidget({required String title}){
-    return    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget titleWidget({required String title, bool isRequired = false}) {
+    return Row(
       children: [
-        Row(
-          children: [
-            Text(title,style: TextStyle(fontSize: 12,color: Colors.black),),
-          ],
+        RichText(
+          text: TextSpan(
+            text: title,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black,
+            ),
+            children: [
+              if (isRequired)
+                const TextSpan(
+                  text: " *",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+            ],
+          ),
         ),
-        SizedBox(height: 5,),
       ],
     );
   }
