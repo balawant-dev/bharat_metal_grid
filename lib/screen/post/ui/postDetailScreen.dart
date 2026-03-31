@@ -167,7 +167,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                   /// 🔹 LIKE / DISLIKE SECTION
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
 
                       /// 👍 LIKE
@@ -176,7 +176,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           IconButton(
                             icon: Icon(
                               Icons.thumb_up,
-                              size: 32,
+                              size: 25,
                               color:
                               isLiked ? Colors.blue : Colors.grey,
                             ),
@@ -203,37 +203,37 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ),
 
                       /// 👎 DISLIKE
-                      Column(
-                        children: [
-                          IconButton(
-                            icon: Icon(
-                              Icons.thumb_down,
-                              size: 32,
-                              color: isDisliked
-                                  ? Colors.red
-                                  : Colors.grey,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                if (!isDisliked) {
-                                  dislikeCount++;
-                                  if (isLiked) {
-                                    likeCount--;
-                                    isLiked = false;
-                                  }
-                                  isDisliked = true;
-                                } else {
-                                  dislikeCount--;
-                                  isDisliked = false;
-                                }
-                              });
-
-                              _react(context, post.sId ?? "", "dislike");
-                            },
-                          ),
-                          Text(dislikeCount.toString()),
-                        ],
-                      ),
+                      // Column(
+                      //   children: [
+                      //     IconButton(
+                      //       icon: Icon(
+                      //         Icons.thumb_down,
+                      //         size: 32,
+                      //         color: isDisliked
+                      //             ? Colors.red
+                      //             : Colors.grey,
+                      //       ),
+                      //       onPressed: () {
+                      //         setState(() {
+                      //           if (!isDisliked) {
+                      //             dislikeCount++;
+                      //             if (isLiked) {
+                      //               likeCount--;
+                      //               isLiked = false;
+                      //             }
+                      //             isDisliked = true;
+                      //           } else {
+                      //             dislikeCount--;
+                      //             isDisliked = false;
+                      //           }
+                      //         });
+                      //
+                      //         _react(context, post.sId ?? "", "dislike");
+                      //       },
+                      //     ),
+                      //     Text(dislikeCount.toString()),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ],
@@ -260,10 +260,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     if (date == null || date.isEmpty) return "N/A";
 
     try {
-      DateTime parsedDate = DateTime.parse(date);
+      DateTime parsedDate = DateTime.parse(date).toLocal(); // 🔥 IMPORTANT
       return DateFormat('dd MMM yyyy, hh:mm a').format(parsedDate);
     } catch (e) {
-      return date;
+      return date ?? "";
     }
   }
 }

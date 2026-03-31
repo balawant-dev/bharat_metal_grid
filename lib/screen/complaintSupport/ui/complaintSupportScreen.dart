@@ -71,6 +71,7 @@ class ComplaintSupportScreen extends StatelessWidget {
                 _field(
                   controller: emailController,
                   label: "Email",
+                  hint: "Enter your email address",
                   icon: Icons.email,
                   error: state.emailError,
                 ),
@@ -81,6 +82,7 @@ class ComplaintSupportScreen extends StatelessWidget {
                 _field(
                   controller: mobileController,
                   label: "Mobile Number",
+                  hint: "Enter your mobile number",
                   icon: Icons.phone,
                   keyboard: TextInputType.phone,
                   maxLength: 10,
@@ -94,6 +96,7 @@ class ComplaintSupportScreen extends StatelessWidget {
                 _field(
                   controller: remarkController,
                   label: "Remark",
+                  hint: "Write your message or remark here",
                   maxLines: 4,
                   error: state.remarkError,
                 ),
@@ -175,6 +178,7 @@ class ComplaintSupportScreen extends StatelessWidget {
   Widget _field({
     required TextEditingController controller,
     required String label,
+    required String hint,
     IconData? icon,
     String? error,
     int maxLines = 1,
@@ -203,6 +207,8 @@ class ComplaintSupportScreen extends StatelessWidget {
           maxLines: maxLines,
           maxLength: maxLength,
           decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(fontSize: 13,color: Colors.grey),
             prefixIcon: icon != null ? Icon(icon) : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

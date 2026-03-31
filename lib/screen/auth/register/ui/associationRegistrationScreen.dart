@@ -460,7 +460,7 @@ class _AssociationRegistrationScreenState
                           ),
                         ),
                         const SizedBox(height: 16),
-                      titleWidget(title: "Pin Code*",isRequired: true),
+                      titleWidget(title: "Pin Code",isRequired: true),
 
                         CommonTextFormField(
                           controller: pinController,
@@ -469,18 +469,21 @@ class _AssociationRegistrationScreenState
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
+                        titleWidget(title:  "Govt/Legal registration number"),
                         CommonTextFormField(
                           controller: govtRegistrationNumber,
                           hintText: "Govt/Legal registration number",
                           keyboardType: TextInputType.text,
                         ),
                         const SizedBox(height: 16),
+                        titleWidget(title:  "Year of formation",),
                         CommonTextFormField(
                           controller: yearFormationController,
                           hintText: "Year of formation",
                           keyboardType: TextInputType.number,
                         ),
                         const SizedBox(height: 16),
+                        titleWidget(title:  "President/Secretary",),
                         CommonTextFormField(
                           controller: presidentSecretaryController,
                           hintText: "President/Secretary",
@@ -516,6 +519,7 @@ class _AssociationRegistrationScreenState
                       children: [
                         // Type
                         titleWidget(title:    "Registration Certificate",),
+                        SizedBox(height: 6,),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 12,
@@ -569,6 +573,8 @@ class _AssociationRegistrationScreenState
                           ),
                         ),
                         const SizedBox(height: 16),
+                     titleWidget(title:    "Certificate Image",),
+                        SizedBox(height: 6,),
                         GestureDetector(
                           onTap: showDocumentPicker, // same function
                           child: Column(
@@ -648,7 +654,8 @@ class _AssociationRegistrationScreenState
 
 
                         const SizedBox(height: 16),
-
+                        titleWidget(title:    "Verified By",),
+                        SizedBox(height: 6,),
                         CommonTextFormField(
                           controller: verifiedByController,
                           hintText: "Verified By",
@@ -662,7 +669,8 @@ class _AssociationRegistrationScreenState
                           },
                         ),
 
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 16),  titleWidget(title:    "Verified At",),
+                        SizedBox(height: 6,),
                         CommonTextFormField(
                           controller: verifiedAtController,
                           hintText: "Verified At",
@@ -761,6 +769,7 @@ class _AssociationRegistrationScreenState
     "Assam",
     "Bihar",
     "Chhattisgarh",
+    "Delhi",
     "Goa",
     "Gujarat",
     "Haryana",
@@ -784,7 +793,7 @@ class _AssociationRegistrationScreenState
     "Uttar Pradesh",
     "Uttarakhand",
     "West Bengal",
-    "Delhi",
+
   ];
   bool validateFields() {
 

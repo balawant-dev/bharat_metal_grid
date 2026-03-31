@@ -63,59 +63,144 @@ class _LeadershipScreenState extends State<LeadershipScreen> {
 
   /// 🔥 ORGANIZATION STRUCTURE UI
   Widget _buildLeadershipStructure(List<Data> employees) {
+    /// 🔥 GROUP BY DESIGNATION
+    Map<String, List<Data>> grouped = {};
 
-    final president = employees
-        .where((e) => e.designation == "President")
-        .toList();
+    for (var emp in employees) {
+      final key = emp.designation ?? "Other";
+      if (grouped.containsKey(key)) {
+        grouped[key]!.add(emp);
+      } else {
+        grouped[key] = [emp];
+      }
+    }
 
-    final vicePresident = employees
-        .where((e) => e.designation == "Vice-President")
-        .toList();
+    /// 🔥 SORT (optional priority order)
+    final priorityOrder = [
+      "President",
+      "Vice-President",
+      "Secretary",
+      "Treasurer",
+    ];
 
-    final secretary = employees
-        .where((e) => e.designation == "Secretary")
-        .toList();
+    List<String> sortedKeys = grouped.keys.toList();
 
-    final treasurer = employees
-        .where((e) => e.designation == "Treasurer")
-        .toList();
-    final other = employees
-        .where((e) => e.designation == "Other")
-        .toList();
+    sortedKeys.sort((a, b) {
+      int indexA = priorityOrder.indexOf(a);
+      int indexB = priorityOrder.indexOf(b);
+
+      if (indexA == -1) indexA = 999;
+      if (indexB == -1) indexB = 999;
+
+      return indexA.compareTo(indexB);
+    });
 
     return SingleChildScrollView(
       child: Column(
-        children: [
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: sortedKeys.map((designation) {
+          final members = grouped[designation]!;
 
-          /// 🔝 PRESIDENT (TOP CENTER)
-          if (president.isNotEmpty)
-            Center(child: _employeeCard(employee:president.first, height: 200,width: 180,fontSize: 20)),
-
-          const SizedBox(height: 40),
-
-          /// 🔽 SECOND ROW
-          Row(
+          return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              if (vicePresident.isNotEmpty)
-                Expanded(child: _employeeCard(employee:vicePresident.first,height: 140,width: 140,fontSize: 16)),
+              /// 🔥 DESIGNATION TITLE
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  designation,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
 
-              const SizedBox(width: 12),
+              /// 🔥 MULTIPLE MEMBERS GRID
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: members.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // 👉 change 2/3 as needed
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.75,
+                ),
+                itemBuilder: (context, index) {
+                  final emp = members[index];
 
-              if (secretary.isNotEmpty)
-                Expanded(child: _employeeCard(employee:secretary.first,width: 140,height: 140,fontSize: 16)),
+                  return _employeeCard(
+                    employee: emp,
+                    height: 120,
+                    width: 120,
+                    fontSize: 14,
+                  );
+                },
+              ),
 
-              const SizedBox(width: 12),
-
-              if (treasurer.isNotEmpty)
-                Expanded(child: _employeeCard(employee:treasurer.first,width: 140,height: 140,fontSize: 16)),
+              const SizedBox(height: 10),
             ],
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
+  // Widget _buildLeadershipStructure(List<Data> employees) {
+  //
+  //   final president = employees
+  //       .where((e) => e.designation == "President")
+  //       .toList();
+  //
+  //   final vicePresident = employees
+  //       .where((e) => e.designation == "Vice-President")
+  //       .toList();
+  //
+  //   final secretary = employees
+  //       .where((e) => e.designation == "Secretary")
+  //       .toList();
+  //
+  //   final treasurer = employees
+  //       .where((e) => e.designation == "Treasurer")
+  //       .toList();
+  //   final other = employees
+  //       .where((e) => e.designation == "Other")
+  //       .toList();
+  //
+  //   return SingleChildScrollView(
+  //     child: Column(
+  //       children: [
+  //
+  //         /// 🔝 PRESIDENT (TOP CENTER)
+  //         if (president.isNotEmpty)
+  //           Center(child: _employeeCard(employee:president.first, height: 200,width: 180,fontSize: 20)),
+  //
+  //         const SizedBox(height: 40),
+  //
+  //         /// 🔽 SECOND ROW
+  //         Row(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //
+  //             if (vicePresident.isNotEmpty)
+  //               Expanded(child: _employeeCard(employee:vicePresident.first,height: 140,width: 140,fontSize: 16)),
+  //
+  //             const SizedBox(width: 12),
+  //
+  //             if (secretary.isNotEmpty)
+  //               Expanded(child: _employeeCard(employee:secretary.first,width: 140,height: 140,fontSize: 16)),
+  //
+  //             const SizedBox(width: 12),
+  //
+  //             if (treasurer.isNotEmpty)
+  //               Expanded(child: _employeeCard(employee:treasurer.first,width: 140,height: 140,fontSize: 16)),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /// 🔥 EMPLOYEE CARD
   Widget _employeeCard({required Data employee,required double height,required double width,required double fontSize}) {

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../widget/customAppbar.dart';
+import '../../../widget/custom_image_picker.dart';
 import '../../../widget/motionToastHelper.dart';
 import '../bloc/leaderShipBloc.dart';
 import '../bloc/leaderShipEvent.dart';
@@ -25,7 +26,7 @@ class _PostLeaderShipScreenState
 
   String? selectedDesignation;
   File? imageFile;
-
+  final TextEditingController otherDesignationController = TextEditingController();
   final List<String> designationList = [
     "President",
     "Vice-President",
@@ -45,19 +46,53 @@ class _PostLeaderShipScreenState
   }
 
   void submit() {
-    if (nameController.text.isEmpty ||
-        selectedDesignation == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("All fields required")),
+    if (imageFile == null) {
+      ToastHelper.show(
+        context,
+        message:  "Add profile image",
+        type: ToastType.warning,
       );
       return;
+    }
+    if (nameController.text.isEmpty) {
+      ToastHelper.show(
+        context,
+        message:"Enter name",
+        type: ToastType.warning,
+      );
+      return;
+    }
+
+    if (selectedDesignation == null) {
+      ToastHelper.show(
+        context,
+        message: "Select designation",
+        type: ToastType.warning,
+      );
+      return;
+    }
+
+
+    String finalDesignation = selectedDesignation!;
+
+    if (selectedDesignation == "Other") {
+      if (otherDesignationController.text.isEmpty) {
+        ToastHelper.show(
+          context,
+          message: "Enter designation",
+          type: ToastType.warning,
+        );
+        return;
+      }
+      finalDesignation = otherDesignationController.text;
     }
 
     context.read<LeaderShipBloc>().add(
       PostLeaderShipSummitedEvent(
         context: context,
         name: nameController.text,
-        designation: selectedDesignation!,
+        designation: finalDesignation,
+        // designation: selectedDesignation!,
         profileImg: imageFile,
       ),
     );
@@ -107,26 +142,34 @@ class _PostLeaderShipScreenState
               child: Column(
                 children: [
                   // 👇 IMAGE PICKER
-                  GestureDetector(
-                    onTap: pickImage,
-                    child: Container(
-                      height: 120,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        shape: BoxShape.circle,
-                        image: imageFile != null
-                            ? DecorationImage(
-                          image: FileImage(imageFile!),
-                          fit: BoxFit.cover,
-                        )
-                            : null,
-                      ),
-                      child: imageFile == null
-                          ? const Icon(Icons.camera_alt, size: 40)
-                          : null,
-                    ),
+                  CustomImagePicker(
+                    ratioX: 1,
+                    ratioY: 1, // square crop
+
+                    onImageSelected: (file) {
+                      imageFile = file;
+                    },
                   ),
+                  // GestureDetector(
+                  //   onTap: pickImage,
+                  //   child: Container(
+                  //     height: 120,
+                  //     width: 120,
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.grey.shade200,
+                  //       shape: BoxShape.circle,
+                  //       image: imageFile != null
+                  //           ? DecorationImage(
+                  //         image: FileImage(imageFile!),
+                  //         fit: BoxFit.cover,
+                  //       )
+                  //           : null,
+                  //     ),
+                  //     child: imageFile == null
+                  //         ? const Icon(Icons.camera_alt, size: 40)
+                  //         : null,
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 20),
 
@@ -156,6 +199,11 @@ class _PostLeaderShipScreenState
                     onChanged: (value) {
                       setState(() {
                         selectedDesignation = value;
+
+                        // reset manual field when not "Other"
+                        if (value != "Other") {
+                          otherDesignationController.clear();
+                        }
                       });
                     },
                     decoration: const InputDecoration(
@@ -163,6 +211,18 @@ class _PostLeaderShipScreenState
                     ),
                   ),
 
+
+                  if (selectedDesignation == "Other") ...[
+                    const SizedBox(height: 20),
+
+                    TextField(
+                      controller: otherDesignationController,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Designation",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 30),
 
                   // 👇 BUTTON

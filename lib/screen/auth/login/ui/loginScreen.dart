@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           Container(
                             width: width * 0.8,
-                            height: 28,
+                            height: 40,
                             decoration: ShapeDecoration(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(2),

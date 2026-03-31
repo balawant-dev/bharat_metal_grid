@@ -360,7 +360,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
 
 
                     // const SizedBox(height: 16),
-                    titleWidget(title:"Email ID*", isRequired: true),
+                    titleWidget(title:"Email ID", isRequired: true),
                     CommonTextFormField(
                       controller: emailController,
                       hintText: "Email ID",
@@ -380,7 +380,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          hint:  Text("Select State*",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
+                          hint:  Text("Select State",style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black.withOpacity(0.85))),
                           value: selectedState,
                           items: indianStates
                               .map((e) => DropdownMenuItem(value: e, child: Text(e,style: TextStyle(fontWeight: FontWeight.w400,fontSize: 13,color: Colors.black))))
@@ -426,6 +426,105 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                 ),
               ),
               const SizedBox(height: 30),
+                  // Select Associations (Checkboxes)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Text("Select Association", style: TextStyle(    color: Colors.black,
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,)),   const Text("*", style: TextStyle(    color: Colors.red,
+                        fontSize: 16,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  if (state.getAllAssociationModel != null &&
+                      state.getAllAssociationModel!.data!.isNotEmpty)
+                    DropdownSearch<String>.multiSelection(
+                      items: (filter, loadProps) async {
+                        return state.getAllAssociationModel!.data!
+                            .map((e) => e.associationName ?? "")
+                            .where((item) =>
+                            item.toLowerCase().contains(filter.toLowerCase()))
+                            .toList();
+                      },
+
+
+                      selectedItems: const [],
+
+                      popupProps: const PopupPropsMultiSelection.dialog(
+                        showSearchBox: true,
+                        searchFieldProps: const TextFieldProps(
+                          decoration: InputDecoration(
+                            hintText: "Search associations", // 🔍 hint here
+                          ),
+                        ),
+
+                      ),
+
+                      // ✅ CORRECT PARAMETER NAME
+                      dropdownBuilder: (context, selectedItems) {
+                        return const Text(
+                          "Select Associations",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        );
+                      },
+
+                      // dropdownBuilderMultiSelection: (context, items) {
+                      //   return const Text(
+                      //     "Select Associations",
+                      //     style: TextStyle(color: Colors.grey),
+                      //   );
+                      // },
+
+                      onChanged: (List<String> selectedNames) {
+                        setState(() {
+                          selectedAssociations.clear();
+                          selectedAssociationNames.clear(); // 👈 new list
+
+                          for (var assoc in state.getAllAssociationModel!.data!) {
+                            if (selectedNames.contains(assoc.associationName)) {
+                              selectedAssociations.add(assoc.sId ?? "");
+                              selectedAssociationNames.add(assoc.associationName ?? "");
+                            }
+                          }
+                        });
+                      },
+                    ),
+                  if (selectedAssociationNames.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 6,
+                        children: selectedAssociationNames.map((name) {
+                          return Chip(
+                            label: Text(name),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () {
+                              setState(() {
+                                int index = selectedAssociationNames.indexOf(name);
+                                selectedAssociationNames.removeAt(index);
+                                selectedAssociations.removeAt(index);
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+
+
+
+
+
+                  // const SizedBox(height: 30),
+
+                  SizedBox(height: 20),
 
 
               decorationContainer(
@@ -465,12 +564,21 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       ),
                     ),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Designation", isRequired: false),
+                    SizedBox(height: 5,),
 
                     CommonTextFormField(controller: designation, hintText: "Designation"),
-                    const SizedBox(height: 16),         CommonTextFormField(controller: orgNameController, hintText: "Organization Name"),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Organization Name", isRequired: false),
+                    SizedBox(height: 5,),
+                    CommonTextFormField(controller: orgNameController, hintText: "Organization Name"),
+                    const SizedBox(height: 16),
+                    titleWidget(title:"Parent Organization Name", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: parentOrgController, hintText: "Parent Organization Name"),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Postal Address", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: postalAddressController, hintText: "Postal Address"),
                     const SizedBox(height: 16),
                     CommonTextFormField(  suffixIcon: Icon(Icons.calendar_month,color: Colors.grey.shade500,),controller: dateIncorporationController, hintText: "Date of Incorporation", onTap: () {
@@ -480,114 +588,30 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
                       );
                     },),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Contact Number", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: orgContactController, hintText: "Contact Number", keyboardType: TextInputType.phone,maxLength: 10,),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Email ID", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: orgEmailController, hintText: "Email ID", keyboardType: TextInputType.emailAddress),
                     const SizedBox(height: 16),
+                    titleWidget(title:"Nature of Organization", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: natureOrgController, hintText: "Nature of Organization"),
                     const SizedBox(height: 16),
+                    titleWidget(title:"PAN Number", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: panController, hintText: "PAN Number"),
                     const SizedBox(height: 16),
+                    titleWidget(title:"GST Number", isRequired: false),
+                    SizedBox(height: 5,),
                     CommonTextFormField(controller: gstController, hintText: "GST Number"),
                     const SizedBox(height: 24),
 
 
 
-                    // Select Associations (Checkboxes)
-                    Row(
-                      children: [
-                        const Text("Select Association*", style: TextStyle(    color: Colors.black,
-                          fontSize: 16,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    if (state.getAllAssociationModel != null &&
-                        state.getAllAssociationModel!.data!.isNotEmpty)
-                      DropdownSearch<String>.multiSelection(
-                        items: (filter, loadProps) async {
-                          return state.getAllAssociationModel!.data!
-                              .map((e) => e.associationName ?? "")
-                              .where((item) =>
-                              item.toLowerCase().contains(filter.toLowerCase()))
-                              .toList();
-                        },
 
-
-                        selectedItems: const [],
-
-                        popupProps: const PopupPropsMultiSelection.dialog(
-                          showSearchBox: true,
-                          searchFieldProps: const TextFieldProps(
-                            decoration: InputDecoration(
-                              hintText: "Search associations*", // 🔍 hint here
-                            ),
-                          ),
-
-                        ),
-
-                        // ✅ CORRECT PARAMETER NAME
-                        dropdownBuilder: (context, selectedItems) {
-                          return const Text(
-                            "Select Associations*",
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          );
-                        },
-
-                        // dropdownBuilderMultiSelection: (context, items) {
-                        //   return const Text(
-                        //     "Select Associations",
-                        //     style: TextStyle(color: Colors.grey),
-                        //   );
-                        // },
-
-                        onChanged: (List<String> selectedNames) {
-                          setState(() {
-                            selectedAssociations.clear();
-                            selectedAssociationNames.clear(); // 👈 new list
-
-                            for (var assoc in state.getAllAssociationModel!.data!) {
-                              if (selectedNames.contains(assoc.associationName)) {
-                                selectedAssociations.add(assoc.sId ?? "");
-                                selectedAssociationNames.add(assoc.associationName ?? "");
-                              }
-                            }
-                          });
-                        },
-                      ),
-                    if (selectedAssociationNames.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 6,
-                          children: selectedAssociationNames.map((name) {
-                            return Chip(
-                              label: Text(name),
-                              deleteIcon: const Icon(Icons.close, size: 18),
-                              onDeleted: () {
-                                setState(() {
-                                  int index = selectedAssociationNames.indexOf(name);
-                                  selectedAssociationNames.removeAt(index);
-                                  selectedAssociations.removeAt(index);
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                      ),
-
-
-
-
-
-                    // const SizedBox(height: 30),
-
-                    SizedBox(height: 20),
                     //
                     // CommonAppButton(
                     //   text: "Complete",
@@ -817,7 +841,7 @@ context.read<RegisterBloc>().add(AllAssociationEvent(context: context));
     // Associations
     if (selectedAssociations.isEmpty) {
       ToastHelper.show(context,
-          message: "Please select at least one association", type: ToastType.warning);
+          message: "Please select association", type: ToastType.warning);
       return false;
     }
 

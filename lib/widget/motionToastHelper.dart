@@ -49,7 +49,7 @@ class ToastHelper {
       case ToastType.warning:
         toast = MotionToast.warning(
           title: const Text(
-            "Warning",
+            "Required",
             style: TextStyle(color: Colors.white),
           ),
           description: Text(
