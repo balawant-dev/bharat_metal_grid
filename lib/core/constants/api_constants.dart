@@ -5,8 +5,8 @@
 // static const String socketURl = 'http://192.168.1.14:5009';
 // static const String socketURl = 'https://vamanji.app';
 // static const String baseUrl = 'https://vamanji.app/';
-static const String socketURl = 'http://167.71.226.189:7007';
-static const String baseUrl = 'http://167.71.226.189:7007/';
+static const String socketURl = 'http://160.187.87.138:7007';
+static const String baseUrl = 'http://160.187.87.138:7007/';
 
 
     static const String sendOtp = 'api/user/generate-otp';

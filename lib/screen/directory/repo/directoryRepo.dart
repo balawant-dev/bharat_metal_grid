@@ -21,16 +21,16 @@ import '../model/getDirectoryModel.dart';
 class DirectoryRepo {
   final ApiService _api = ApiService();
 
-  Future<GetDirectoryModel> getDirectoryApi({required BuildContext context}) async {
+  Future<GetDirectoryDetailModel> getDirectoryApi({required BuildContext context,required String id}) async {
     try {
-      final response = await _api.get(ApiConstants.industryNews,requiresAuth: true);
-      return GetDirectoryModel.fromJson(response);
+      final response = await _api.get("${ApiConstants.allAssociation}/${id}",requiresAuth: true);
+      return GetDirectoryDetailModel.fromJson(response);
     } on DioException catch (e) {
       if (e.error is NoInternetException) {
-        showNoInternetScreen(context, onRetry: () => getDirectoryApi(context:context ));
+        showNoInternetScreen(context, onRetry: () => getDirectoryApi(context:context ,id:id));
         throw NoInternetException();
       } else if (e.error is ServerException) {
-        showServerErrorScreen(context, onRetry: () => getDirectoryApi(context:context));
+        showServerErrorScreen(context, onRetry: () => getDirectoryApi(context:context,id:id));
         throw ServerException();
       } else if (e.error is UnauthorizedException) {
         await SecureStorageService.logout(context);

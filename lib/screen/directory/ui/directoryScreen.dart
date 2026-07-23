@@ -177,11 +177,13 @@
 
 
 
+import 'package:bharat_metal_grid/app/router/navigation/nav.dart';
 import 'package:bharat_metal_grid/widget/customAppbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../app/router/navigation/routes.dart';
 import '../../../core/constants/api_constants.dart';
 import '../../auth/register/bloc/registerBloc.dart';
 import '../../auth/register/bloc/registerEvent.dart';
@@ -291,142 +293,147 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
                   itemBuilder: (context, index) {
                     final user = _filteredList[index];
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade300,
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-
-                          /// Profile Image
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Image.network(
-                              "${ApiConstants.baseUrl}${user.profileImage}",
-                              height: 64,
-                              width: 64,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  height: 64,
-                                  width: 64,
-                                  color: Colors.grey.shade200,
-                                  child: const Icon(Icons.person),
-                                );
-                              },
+                    return GestureDetector(
+                      onTap: (){
+                        Nav.push(context, Routes.directoryDetail,extra: {"id":user.sId});
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
 
-                          const SizedBox(width: 16),
+                            /// Profile Image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: Image.network(
+                                "${ApiConstants.baseUrl}${user.profileImage}",
+                                height: 64,
+                                width: 64,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 64,
+                                    width: 64,
+                                    color: Colors.grey.shade200,
+                                    child: const Icon(Icons.person),
+                                  );
+                                },
+                              ),
+                            ),
 
-                          /// Details
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                            const SizedBox(width: 16),
 
-                                Text(
-                                  user.associationName ?? "Not Available",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black
+                            /// Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  Text(
+                                    user.associationName ?? "Not Available",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black
+                                    ),
                                   ),
-                                ),
 
-                                const SizedBox(height: 6),
+                                  const SizedBox(height: 6),
 
-                                /// Phone
-                                GestureDetector(
-                                  onTap: () {
-                                    if (user.phoneNumber != null) {
-                                      _makeCall(user.phoneNumber!);
-                                    }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.phone,
-                                          size: 16, color: Colors.black),
-                                      const SizedBox(width: 6),
-                                      Text(
-                                        user.phoneNumber ?? "Not Available",
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                       //   decoration:
-                                      //    TextDecoration.underline,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                const SizedBox(height: 4),
-
-                                /// Email
-                                GestureDetector(
-                                  onTap: () {
-                                    if (user.email != null) {
-                                      _sendEmail(user.email!);
-                                    }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.email,
-                                          size: 16, color: Colors.black),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          user.email ?? "Not Available",
+                                  /// Phone
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (user.phoneNumber != null) {
+                                        _makeCall(user.phoneNumber!);
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.phone,
+                                            size: 16, color: Colors.black),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          user.phoneNumber ?? "Not Available",
                                           style: const TextStyle(
                                             color: Colors.black,
-                                            // decoration:
-                                            // TextDecoration.underline,
+                                         //   decoration:
+                                        //    TextDecoration.underline,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    // if (user.email != null) {
-                                    //   _sendEmail(user.email!);
-                                    // }
-                                  },
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.location_on_sharp,
-                                          size: 16, color: Colors.black),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          user.state ?? "Not Available",
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            // decoration:
-                                            // TextDecoration.underline,
+
+                                  const SizedBox(height: 4),
+
+                                  /// Email
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (user.email != null) {
+                                        _sendEmail(user.email!);
+                                      }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.email,
+                                            size: 16, color: Colors.black),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            user.email ?? "Not Available",
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              // decoration:
+                                              // TextDecoration.underline,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      // if (user.email != null) {
+                                      //   _sendEmail(user.email!);
+                                      // }
+                                    },
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.location_on_sharp,
+                                            size: 16, color: Colors.black),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            user.state ?? "Not Available",
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              // decoration:
+                                              // TextDecoration.underline,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },

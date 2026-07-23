@@ -3,8 +3,10 @@ import 'package:equatable/equatable.dart';
 import '../model/getDirectoryModel.dart';
 
 
+
+
 class DirectoryState extends Equatable {
-  final GetDirectoryModel? getDirectoryModel;
+  final GetDirectoryDetailModel? getDirectoryModel;
 
   
   final bool isLoading;
@@ -22,7 +24,7 @@ class DirectoryState extends Equatable {
   });
 
   DirectoryState copyWith({
-    GetDirectoryModel? getDirectoryModel,
+    GetDirectoryDetailModel? getDirectoryModel,
 
     bool? isLoading,
     bool? isUpdateLoading,

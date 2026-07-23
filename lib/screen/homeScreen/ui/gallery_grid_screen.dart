@@ -133,6 +133,9 @@ class _FullGalleryViewState extends State<FullGalleryView> {
               child: Image.network(
                 "${ApiConstants.baseUrl}${image.images!.first}",
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.image_not_supported_outlined,color: Colors.grey,size: 100,);
+                },
               ),
             ),
           );

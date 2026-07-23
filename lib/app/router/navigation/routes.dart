@@ -34,5 +34,6 @@ class Routes {
   static const associationRegister = '/associationRegister';
   static const industryDetail = '/industryDetail';
   static const latestNoticeDetail = '/latestNoticeDetail';
+  static const directoryDetail = '/directoryDetail';
 
 }

@@ -24,8 +24,8 @@ class DirectoryBloc extends Bloc<DirectoryEvent,DirectoryState>{
       ) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
     try {
-      final response = await api.getDirectoryApi(context:event.context);
-      if (response.status == true) {
+      final response = await api.getDirectoryApi(context:event.context,id: event.id);
+      if (response.success == true) {
 
         emit(
           state.copyWith(

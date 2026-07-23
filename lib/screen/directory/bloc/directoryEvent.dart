@@ -9,12 +9,13 @@ class DirectoryEvent extends Equatable{
 
 class FetchDirectoryEvent extends DirectoryEvent{
   final BuildContext context;
+  final String id;
 
 
-  FetchDirectoryEvent({required this.context});
+  FetchDirectoryEvent({required this.context,required this.id});
 
   @override
-  List<Object?> get props => [context];
+  List<Object?> get props => [context,id];
 }
 
 class ResetDirectoryEvent extends DirectoryEvent {

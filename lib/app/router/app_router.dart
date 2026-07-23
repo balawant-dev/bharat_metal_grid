@@ -17,6 +17,7 @@ import '../../screen/auth/role/ui/role_select_screen.dart';
 import '../../screen/bottomNavigationBar/bottomNavigationBar.dart';
 import '../../screen/cms/ui/cMSHtmlScreen.dart';
 import '../../screen/complaintSupport/ui/complaintSupportScreen.dart';
+import '../../screen/directory/ui/directoryDetailScreen.dart';
 import '../../screen/gridAI/ui/chatScreen.dart';
 import '../../screen/homeScreen/model/galleryListModel.dart';
 import '../../screen/homeScreen/ui/gallery_grid_screen.dart';
@@ -280,6 +281,16 @@ class AppRouter {
       GoRoute(
         path: Routes.latestNotices,
         builder: (_, __) => LatestNoticeListScreen(),
+      ),
+
+      GoRoute(
+        path: Routes.directoryDetail,
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return DirectoryDetailScreen(
+            id: data["id"] as String,
+          );
+        },
       ),
       GoRoute(
         path: Routes.industryNews,

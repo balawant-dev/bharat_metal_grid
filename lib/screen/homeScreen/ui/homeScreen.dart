@@ -89,310 +89,310 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: ColorResource.white,
       drawer: const AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          userName = await SecureStorageService.getUserName() ?? "";
 
-          userProfileImage = await SecureStorageService.getUserProfileImage() ?? "";
-          context.read<HomeBloc>().add(FetchBannerEvent(context: context));
-
+        // RefreshIndicator(
+        //   onRefresh: () async {
+        //     // userName = await SecureStorageService.getUserName() ?? "";
+        //     //
+        //     // userProfileImage = await SecureStorageService.getUserProfileImage() ?? "";
+        //     // context.read<HomeBloc>().add(FetchBannerEvent(context: context));
+        //
+        //   },
+      body: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          initUserType();
+          //AppSettings.initUserType();
+          // if (state.errorMessage != null) {
+          //   ScaffoldMessenger.of(context).showSnackBar(
+          //     SnackBar(content: Text(state.errorMessage!)),
+          //   );
+          // }
         },
-        child: BlocConsumer<HomeBloc, HomeState>(
-          listener: (context, state) {
-            initUserType();
-            //AppSettings.initUserType();
-            // if (state.errorMessage != null) {
-            //   ScaffoldMessenger.of(context).showSnackBar(
-            //     SnackBar(content: Text(state.errorMessage!)),
-            //   );
-            // }
-          },
-          builder: (context, state) {
-            AppSettings.initUserType();
-            if (state.isLoading && state.getBannerModel == null) {
-              return const HomeSkeleton(); // 👈 only first time
-            }
-            // if (state.isLoading) {
-            //   return const HomeSkeleton();
-            // }
+        builder: (context, state) {
+          AppSettings.initUserType();
+          if (state.isLoading && state.getBannerModel == null) {
+            return const HomeSkeleton(); // 👈 only first time
+          }
+          // if (state.isLoading) {
+          //   return const HomeSkeleton();
+          // }
 
-            /// ❌ SAFETY CHECK
-            if (state.latestNoticesModel == null ||
-                state.industryNewsModel == null ||
-                state.galleryListModel == null) {
-              return HomeSkeleton();
-            }
+          /// ❌ SAFETY CHECK
+          if (state.latestNoticesModel == null ||
+              state.industryNewsModel == null ||
+              state.galleryListModel == null) {
+            return HomeSkeleton();
+          }
 
-            return Stack(
-              children: [
-                if (state.isLoading)
-                  Positioned(
-                    top: 100,
-                    left: 0,
-                    right: 0,
-                    child: LinearProgressIndicator(
-                      minHeight: 3,
-                      backgroundColor: Colors.red,
-                      valueColor: AlwaysStoppedAnimation(Colors.greenAccent),
-                    ),
+          return Stack(
+            children: [
+              if (state.isLoading)
+                Positioned(
+                  top: 100,
+                  left: 0,
+                  right: 0,
+                  child: LinearProgressIndicator(
+                    minHeight: 3,
+                    backgroundColor: Colors.red,
+                    valueColor: AlwaysStoppedAnimation(Colors.greenAccent),
                   ),
-                Builder(
-                  builder: (context) {
-                    return CustomScrollView(
-                      slivers: [
-                        SliverAppBar(
-                          pinned: true,
-                          expandedHeight: 300.0,
-                          backgroundColor: ColorResource.white,
+                ),
+              Builder(
+                builder: (context) {
+                  return CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        pinned: true,
+                        // expandedHeight: 300.0,
+                        backgroundColor: ColorResource.white,
 
-                          automaticallyImplyLeading: false,
-                          // backgroundColor: Color(0xFF062E7E),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      print("Open drawer");
-                                      Scaffold.of(context).openDrawer();
-                                    },
-                                    child: Container(
-                                      height: 45,
-                                      width: 45,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(100),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(100),
-
-                                        child: Image.network(
-                                          "${ApiConstants.baseUrl}${userProfileImage}",
-                                          height: 30,
-                                          fit: BoxFit.fill,
-                                          errorBuilder: (context, error, stackTrace) {
-                                            return Image.asset(
-                                              "assets/icon/profileAvatar.png",
-                                              height: 30,
-                                              fit: BoxFit.fill,
-                                              //       color: Colors.white,
-                                            );
-                                            ;
-                                          },
-                                        ),
-                                      ),
+                        automaticallyImplyLeading: false,
+                        // backgroundColor: Color(0xFF062E7E),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    print("Open drawer");
+                                    Scaffold.of(context).openDrawer();
+                                  },
+                                  child: Container(
+                                    height: 45,
+                                    width: 45,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        getGreeting(),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      FutureBuilder(
-                                        future: AppSettings.initUserType(),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState !=
-                                              ConnectionState.done) {
-                                            return SizedBox();
-                                            // return const CircularProgressIndicator();
-                                          }
-                                          return Text(
-                                           "${userName}",
-                                            style: TextStyle(
-                                              color: const Color(0xFFE0E4C8),
-                                              fontSize: 12,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+
+                                      child: Image.network(
+                                        "${ApiConstants.baseUrl}${userProfileImage}",
+                                        height: 30,
+                                        fit: BoxFit.fill,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset(
+                                            "assets/icon/profileAvatar.png",
+                                            height: 30,
+                                            fit: BoxFit.fill,
+                                            //       color: Colors.white,
                                           );
+                                          ;
                                         },
                                       ),
-
-                                      // Text(
-                                      //   "${AppSettings.userName}",
-                                      //   // 'Rahul!',
-                                      //   style: TextStyle(
-                                      //     color: const Color(0xFFE0E4C8),
-                                      //     fontSize: 12,
-                                      //     fontFamily: 'Poppins',
-                                      //     fontWeight: FontWeight.w500,
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Nav.push(
-                                    context,
-                                    Routes.notification,
-                                    //extra: widget.isAgent,
-                                  );
-                                },
-                                child: Image.asset(
-                                  "assets/icon/notification.png",
-                                  scale: 3.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                          flexibleSpace: DecoratedBox(
-                            // ← key wrapper for persistent gradient
-                            decoration: const ShapeDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment(-0.00, 0.50),
-                                end: Alignment(1.00, 0.50),
-                                colors: [Color(0xFF2D5FC0), Color(0xFF062E7E)],
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(90),
-                                ),
-                              ),
-                            ),
-                            child: FlexibleSpaceBar(
-                              background: Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: ShapeDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment(-0.00, 0.50),
-                                    end: Alignment(1.00, 0.50),
-                                    colors: [
-                                      const Color(0xFF2D5FC0),
-                                      const Color(0xFF062E7E),
-                                    ],
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(93),
                                     ),
                                   ),
                                 ),
-                                child: SafeArea(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Greeting + Bell
-                                      const SizedBox(height: 70),
-                                      Container(
-                                        width: width,
-                                        height: 40,
-                                        //  clipBehavior: Clip.antiAlias,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'Metal rate: Silver- 300000/- kg | Gold 24 CRT - 14000/10gm',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 13,
-                                              fontFamily: 'Poppins',
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      getGreeting(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    FutureBuilder(
+                                      future: AppSettings.initUserType(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState !=
+                                            ConnectionState.done) {
+                                          return SizedBox();
+                                          // return const CircularProgressIndicator();
+                                        }
+                                        return Text(
+                                         "${userName}",
+                                          style: TextStyle(
+                                            color: const Color(0xFFE0E4C8),
+                                            fontSize: 12,
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w500,
                                           ),
-                                        ),
-                                      ),
-                                      SizedBox(height: 15),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 12.0),
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              children: [
-                                                SizedBox(
-                                                  width: 180,
-                                                  child: OverlappingAvatars(),
-                                                ),
-                                                SizedBox(height: 10),
-                                                SizedBox(
-                                                  width: 135,
-                                                  child: Text(
-                                                    'Members Already Joined',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 10,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight: FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(height: 15),
-                                                // CommonAppButton(
-                                                //   width: 150,
-                                                //   height: 40,
-                                                //   fontSize: 13,
-                                                //   fontWeight: FontWeight.w500,
-                                                //   text: "Renew Now    →",
-                                                //   onPressed: () {},
-                                                // ),
-                                              ],
-                                            ),
-                                            CircleProgressRingScreen(),
-                                          ],
-                                        ),
-                                      ),
+                                        );
+                                      },
+                                    ),
 
-                                      //     const Spacer(),
-
-                                      // Metal Rates
-
-                                      // Renew Button
-                                    ],
+                                    // Text(
+                                    //   "${AppSettings.userName}",
+                                    //   // 'Rahul!',
+                                    //   style: TextStyle(
+                                    //     color: const Color(0xFFE0E4C8),
+                                    //     fontSize: 12,
+                                    //     fontFamily: 'Poppins',
+                                    //     fontWeight: FontWeight.w500,
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Nav.push(
+                                  context,
+                                  Routes.notification,
+                                  //extra: widget.isAgent,
+                                );
+                              },
+                              child: Image.asset(
+                                "assets/icon/notification.png",
+                                scale: 3.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                        flexibleSpace: DecoratedBox(
+                          // ← key wrapper for persistent gradient
+                          decoration:  ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(-0.00, 0.50),
+                              end: Alignment(1.00, 0.50),
+                              colors: [Color(0xFF2D5FC0), Color(0xFF062E7E)],
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5
+                                // bottomRight: Radius.circular(90),
+                              ),
+                            ),
+                          ),
+                          child: FlexibleSpaceBar(
+                            background: Container(
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment(-0.00, 0.50),
+                                  end: Alignment(1.00, 0.50),
+                                  colors: [
+                                    const Color(0xFF2D5FC0),
+                                    const Color(0xFF062E7E),
+                                  ],
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(93),
                                   ),
+                                ),
+                              ),
+                              child: SafeArea(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Greeting + Bell
+                                    // const SizedBox(height: 70),
+                                    // Container(
+                                    //   width: width,
+                                    //   height: 40,
+                                    //   //  clipBehavior: Clip.antiAlias,
+                                    //   decoration: BoxDecoration(
+                                    //     color: Colors.white,
+                                    //   ),
+                                    //   child: Center(
+                                    //     child: Text(
+                                    //       'Metal rate: Silver- 300000/- kg | Gold 24 CRT - 14000/10gm',
+                                    //       style: TextStyle(
+                                    //         color: Colors.black,
+                                    //         fontSize: 13,
+                                    //         fontFamily: 'Poppins',
+                                    //         fontWeight: FontWeight.w500,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // SizedBox(height: 15),
+                                    // Padding(
+                                    //   padding: const EdgeInsets.only(left: 12.0),
+                                    //   child: Row(
+                                    //     children: [
+                                    //       Column(
+                                    //         children: [
+                                    //           SizedBox(
+                                    //             width: 180,
+                                    //             child: OverlappingAvatars(),
+                                    //           ),
+                                    //           SizedBox(height: 10),
+                                    //           SizedBox(
+                                    //             width: 135,
+                                    //             child: Text(
+                                    //               'Members Already Joined',
+                                    //               style: TextStyle(
+                                    //                 color: Colors.white,
+                                    //                 fontSize: 10,
+                                    //                 fontFamily: 'Poppins',
+                                    //                 fontWeight: FontWeight.w400,
+                                    //               ),
+                                    //             ),
+                                    //           ),
+                                    //           SizedBox(height: 15),
+                                    //           // CommonAppButton(
+                                    //           //   width: 150,
+                                    //           //   height: 40,
+                                    //           //   fontSize: 13,
+                                    //           //   fontWeight: FontWeight.w500,
+                                    //           //   text: "Renew Now    →",
+                                    //           //   onPressed: () {},
+                                    //           // ),
+                                    //         ],
+                                    //       ),
+                                    //       CircleProgressRingScreen(),
+                                    //     ],
+                                    //   ),
+                                    // ),
+
+                                    //     const Spacer(),
+
+                                    // Metal Rates
+
+                                    // Renew Button
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
+                      ),
 
-                        // ─── Body Content ────────────────────────────────────────────────────
-                        SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      // ─── Body Content ────────────────────────────────────────────────────
+                      SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
-                            // "👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏"
-                            children: [
+                          // "👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏👏"
+                          children: [
 
-                              SizedBox(height: 15),
-                              bannerCarousel(bannerList: state.getBannerModel!),
-                              SizedBox(height: 15),
-                              quickSection(context: context),
-                              SizedBox(height: 10),
-                              industryNewsSection(
-                                context: context,
-                                industryNewsModel: state.industryNewsModel!,
-                              ),
-                              SizedBox(height: 15),
-                              latestNoticesSection(
-                                context: context,
-                                latestNoticesModel: state.latestNoticesModel!,
-                              ),
-                              SizedBox(height: 15),
-                              gallerySection(
-                                context: context,
-                                galleryListModel: state.galleryListModel!,
-                              ),
-                            ],
-                          ),
+                            SizedBox(height: 15),
+                            bannerCarousel(bannerList: state.getBannerModel!),
+                            SizedBox(height: 15),
+                            quickSection(context: context),
+                            SizedBox(height: 10),
+                            industryNewsSection(
+                              context: context,
+                              industryNewsModel: state.industryNewsModel!,
+                            ),
+                            SizedBox(height: 15),
+                            latestNoticesSection(
+                              context: context,
+                              latestNoticesModel: state.latestNoticesModel!,
+                            ),
+                            SizedBox(height: 15),
+                            gallerySection(
+                              context: context,
+                              galleryListModel: state.galleryListModel!,
+                            ),
+                          ],
                         ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -511,9 +511,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey.shade200,
-                      child: const Center(
-                        child: Icon(Icons.broken_image, size: 40),
-                      ),
+                      child: Image.asset("assets/images/banner.png",width: MediaQuery.of(context).size.width,fit: BoxFit.fill,),
+                      // child: const Center(
+                      //   child: Icon(Icons.broken_image, size: 40),
+                      // ),
                     );
                   },
                 ),
